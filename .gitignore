@@ -1,7 +1,32 @@
-.venv
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Python cache
 __pycache__/
-.ipynb_checkpoints/
-.env
 *.pyc
+*.pyo
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environment variables (contains API keys)
+.env
+
+# macOS
 .DS_Store
+
+# IDE
 .vscode/
+.idea/
+
+# Outputs (regenerated on each run)
+outputs/index/
+outputs/evaluation_results_*.json
+
+
+# Model cache (large files)
+*.bin
+*.safetensors
