@@ -1,0 +1,76 @@
+# SEC 10-K RAG Pipeline
+# Author: Indhra | January 2026
+# ================================
+
+[project]
+name = "sec-10k-rag"
+version = "0.1.0"
+description = "Retrieval-Augmented Generation pipeline for SEC 10-K financial document QA"
+readme = "README.md"
+license = "MIT"
+requires-python = "==3.13.2"
+authors = [
+    { name = "Indhra" }
+]
+keywords = ["rag", "llm", "sec", "10k", "financial", "nlp"]
+
+dependencies = [
+    # PDF Processing
+    # Why PyMuPDF? Best F1 score on financial docs, 10x faster than VLM approaches
+    "pymupdf==1.26.7",
+    "pdfplumber==0.11.9",
+    
+    # Text Processing & Chunking
+    # tiktoken for accurate token counting (same as OpenAI uses)
+    "tiktoken==0.12.0",
+    "nltk==3.9.2",
+    
+    # Embeddings
+    # sentence-transformers is the go-to library for embedding models
+    "sentence-transformers==5.2.2",
+    "torch==2.10.0",
+    
+    # Vector Store
+    # FAISS for fast similarity search - CPU version for Mac compatibility
+    "faiss-cpu==1.13.2",
+    
+    # BM25 for hybrid search
+    # rank-bm25 is simple and battle-tested
+    "rank-bm25==0.2.2",
+    
+    # LLM Integration
+    # Multiple options: HuggingFace, Groq API, local Ollama
+    "huggingface-hub==1.3.4",
+    "transformers==5.0.0",
+    
+    # For Groq/Together AI free tier (optional but recommended for speed)
+    "groq==1.0.0",
+    "openai==2.15.0",  # OpenAI-compatible client for various providers
+    
+    # Utilities
+    "tqdm==4.67.1",
+    "python-dotenv==1.2.1",
+    "numpy==2.4.1",
+    "pandas==3.0.0",
+    
+    # Production Resilience & Observability
+    # tenacity for retry logic with exponential backoff (industry standard)
+    "tenacity==9.1.2",
+    # python-json-logger for structured logging
+    "python-json-logger==4.0.0",
+    
+    # Evaluation & Visualization
+    "matplotlib==3.10.8",
+    "scikit-learn==1.8.0",
+]
+
+[dependency-groups]
+dev = [
+    # For notebook and testing
+    "jupyter==1.1.1",
+    "ipykernel==7.1.0",
+]
+
+[tool.uv]
+# This is an application, not a library - no need to build/package
+package = false

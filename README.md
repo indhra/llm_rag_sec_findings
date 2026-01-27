@@ -61,15 +61,14 @@ flowchart LR
 git clone https://github.com/indhra/ABB_JAN26.git
 cd ABB_JAN26
 
-# Create virtual environment
-python -m venv .venv
-source .venv/bin/activate
+# Install uv (if not already installed)
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Install dependencies
-pip install -r requirements.txt
+# Sync dependencies (creates .venv automatically)
+uv sync
 
 # Run the pipeline
-python -m src.pipeline
+uv run python -m src.pipeline
 ```
 
 ### Google Colab
@@ -100,7 +99,8 @@ ABB_JAN26/
 │   └── RAG_SEC_10K.ipynb          # Runnable notebook
 ├── outputs/
 │   └── answers.json               # Evaluation results
-├── requirements.txt
+├── pyproject.toml                 # Project config & dependencies (uv)
+├── uv.lock                        # Lockfile for reproducible installs
 ├── design_report.md               # Architecture explanation
 └── README.md
 ```
