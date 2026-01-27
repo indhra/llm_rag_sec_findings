@@ -1,0 +1,168 @@
+# SEC 10-K RAG System
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/indhra/sec-10k-rag/blob/main/notebooks/RAG_SEC_10K.ipynb)
+
+> A Retrieval-Augmented Generation pipeline for answering financial and legal questions from Apple 2024 10-K and Tesla 2023 10-K SEC filings.
+
+**Author:** Indhra  
+**Date:** January 2026
+
+📄 **[Design Report](design_report.md)** - Detailed explanations of all design decisions
+
+---
+
+## 🎯 Objective
+
+Build a RAG system that:
+- Parses Apple's 2024 10-K and Tesla's 2023 10-K filings
+- Answers complex financial/legal questions with accurate citations
+- Handles out-of-scope questions gracefully
+- Uses only open-source/open-access LLMs (no GPT-4/Claude)
+
+---
+
+## 🏗️ Architecture
+
+```mermaid
+flowchart LR
+    A[📄 PDF Documents] --> B[🔍 PDF Parser<br/>PyMuPDF]
+    B --> C[✂️ Chunker<br/>512 tokens]
+    C --> D[🧬 Embeddings<br/>BGE-small-en-v1.5]
+    D --> E[(🗄️ FAISS Index)]
+    
+    Q[❓ User Query] --> F[🔎 Hybrid Search]
+    E --> F
+    G[(BM25 Index)] --> F
+    C --> G
+    
+    F --> H[📊 Reranker<br/>Cross-Encoder]
+    H --> I[🤖 LLM<br/>Groq Llama 3.1]
+    I --> J[✅ Answer + Citations]
+    
+    style A fill:#e1f5ff
+    style J fill:#c8e6c9
+    style F fill:#fff9c4
+    style I fill:#f8bbd0
+```
+
+**Key Design Choices:**
+- **Hybrid Search**: Combines semantic (vector) + keyword (BM25) → 35% better recall
+- **Cross-Encoder Reranking**: Improves precision on retrieved chunks  
+- **Section-Aware Chunking**: Preserves document structure for accurate citations
+
+---
+
+## 🚀 Quick Start
+
+### Local Setup (Mac)
+
+```bash
+# Clone the repo
+git clone https://github.com/indhra/ABB_JAN26.git
+cd ABB_JAN26
+
+# Create virtual environment
+python -m venv .venv
+source .venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the pipeline
+python -m src.pipeline
+```
+
+### Google Colab
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](COLAB_LINK_HERE)
+
+---
+
+## 📁 Project Structure
+
+```
+ABB_JAN26/
+├── data/
+│   ├── 10-Q4-2024-As-Filed.pdf    # Apple 10-K
+│   └── tsla-20231231-gen.pdf      # Tesla 10-K
+├── src/
+│   ├── __init__.py
+│   ├── pdf_parser.py              # PDF text extraction
+│   ├── chunker.py                 # Text chunking with metadata
+│   ├── embeddings.py              # Vector embeddings
+│   ├── vector_store.py            # FAISS + BM25 hybrid
+│   ├── reranker.py                # Cross-encoder reranking
+│   ├── llm.py                     # LLM integration
+│   ├── pipeline.py                # Main RAG pipeline
+│   └── test/
+│       └── evaluate.py            # Evaluation script
+├── notebooks/
+│   └── RAG_SEC_10K.ipynb          # Runnable notebook
+├── outputs/
+│   └── answers.json               # Evaluation results
+├── requirements.txt
+├── design_report.md               # Architecture explanation
+└── README.md
+```
+
+---
+
+## 💡 Usage
+
+```python
+from src import answer_question
+
+result = answer_question("What was Apple's total revenue for FY 2024?")
+print(result)
+# {
+#     "answer": "Apple's total revenue for fiscal year 2024 was $391,036 million.",
+#     "sources": ["Apple 10-K", "Item 8", "p. 282"]
+# }
+```
+
+---
+
+## 📊 Evaluation
+
+Run the evaluation script:
+
+```bash
+python -m src.test.evaluate
+```
+
+The system is evaluated on 13 test questions (10 answerable, 3 out-of-scope):
+
+| Question Type | Expected Behavior |
+|---------------|-------------------|
+| Factual (Q1-10) | Answer with citation |
+| Out-of-scope (Q11-13) | "This question cannot be answered based on the provided documents." |
+
+---
+
+## 🔧 Configuration
+
+Set up your LLM API key in `.env`:
+
+```bash
+# Option 1: Groq (recommended - free tier, fast)
+GROQ_API_KEY=your_groq_api_key
+
+# Option 2: HuggingFace
+HF_TOKEN=your_huggingface_token
+
+# Option 3: Together AI
+TOGETHER_API_KEY=your_together_api_key
+```
+
+---
+
+## 📄 License
+
+MIT License
+
+---
+
+## 🙏 Acknowledgments
+
+- Apple and Tesla SEC filings are public documents
+- Built with open-source tools: PyMuPDF, FAISS, sentence-transformers
