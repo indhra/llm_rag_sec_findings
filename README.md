@@ -80,7 +80,7 @@ uv run python -m src.pipeline
 ## 📁 Project Structure
 
 ```
-ABB_JAN26/
+llm_rag_sec_findings/
 ├── data/
 │   ├── 10-Q4-2024-As-Filed.pdf    # Apple 10-K
 │   └── tsla-20231231-gen.pdf      # Tesla 10-K

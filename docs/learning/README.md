@@ -231,7 +231,7 @@ graph LR
 1. **Active Learning**: Don't just read - implement
    ```bash
    # After each module, modify your project:
-   cd /path/to/ABB_JAN26
+   cd /path/to/llm_rag_sec_findings
    # Experiment with different chunk sizes
    # Try different embedding models
    # Test evaluation metrics
