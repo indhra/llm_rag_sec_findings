@@ -23,13 +23,13 @@
 graph TB
     subgraph "Stage 1: Fast Retrieval (Bi-Encoder)"
         Q[Query] --> E1[Embed Query]
-        E1 --> S[Vector Search - 491 chunks in <1ms]
-        S --> R1[Top-15 Candidates - High recall, medium precision]
+        E1 --> S["Vector Search - 491 chunks in <1ms"]
+        S --> R1["Top-15 Candidates - High recall, medium precision"]
     end
     
     subgraph "Stage 2: Precise Reranking (Cross-Encoder)"
-        R1 --> CE[Cross-Encoder - Deep interaction]
-        CE --> R2[Top-5 Results - High precision]
+        R1 --> CE["Cross-Encoder - Deep interaction"]
+        CE --> R2["Top-5 Results - High precision"]
     end
     
     R2 --> LLM[Feed to LLM]
@@ -45,16 +45,16 @@ graph TB
 graph LR
     subgraph "Bi-Encoder Only"
         B1[Query: 'Apple revenue growth']
-        B2[Vector similarity: - 0.82, 0.81, 0.80, 0.79, 0.78...]
+        B2["Vector similarity: - 0.82, 0.81, 0.80, 0.79, 0.78..."]
         B1 --> B2
-        B2 --> B3[All scores similar! - Hard to distinguish]
+        B2 --> B3["All scores similar! - Hard to distinguish"]
     end
     
     subgraph "With Cross-Encoder Reranking"
-        C1[Top-15 candidates]
-        C2[Deep scoring: - 0.95, 0.88, 0.72, 0.45, 0.33...]
+        C1["Top-15 candidates"]
+        C2["Deep scoring: - 0.95, 0.88, 0.72, 0.45, 0.33..."]
         C1 --> C2
-        C2 --> C3[Clear separation! - Pick top-5]
+        C2 --> C3["Clear separation! - Pick top-5"]
     end
     
     style B3 fill:#ffcdd2
@@ -72,22 +72,22 @@ graph LR
 ```mermaid
 graph TB
     subgraph "Bi-Encoder (SBERT, BGE)"
-        Q1[Query: - 'revenue 2024'] --> E1[Encoder A]
-        D1[Document: - 'Apple reported...'] --> E2[Encoder B - Same as A]
+        Q1["Query: 'revenue 2024'"] --> E1["Encoder A"]
+        D1["Document: 'Apple reported...'"] --> E2["Encoder B (Same as A)"]
         
-        E1 --> V1[Vector 1: - [0.2, -0.5, ...]]
-        E2 --> V2[Vector 2: - [0.3, -0.4, ...]]
+        E1 --> V1["Vector 1: 0.2, -0.5, ..."]
+        E2 --> V2["Vector 2: 0.3, -0.4, ..."]
         
         V1 --> Sim[Cosine Similarity]
         V2 --> Sim
-        Sim --> S1[Score: 0.82]
+        Sim --> S1["Score: 0.82"]
     end
     
     subgraph "Cross-Encoder (ms-marco, MonoT5)"
-        Q2[Query + Document: - 'revenue 2024 [SEP] Apple reported...'] --> E3[Joint Encoder]
-        E3 --> A[Cross-Attention - Deep interaction]
+        Q2["Query + Document: 'revenue 2024 [SEP] Apple reported...'"] --> E3["Joint Encoder"]
+        E3 --> A["Cross-Attention - Deep interaction"]
         A --> C[Classification Head]
-        C --> S2[Relevance: 0.95]
+        C --> S2["Relevance: 0.95"]
     end
     
     style E1 fill:#e3f2fd
@@ -127,11 +127,11 @@ top_5 = cross_encoder_rerank(query, top_15, k=5)  # 15 → 5 in ~50ms
 
 ```mermaid
 graph TD
-    A1[Approach 1: - Bi-encoder only] --> R1[❌ Fast but - lower precision]
+    A1["Approach 1: - Bi-encoder only"] --> R1["❌ Fast but - lower precision"]
     
-    A2[Approach 2: - Cross-encoder only] --> R2[❌ Accurate but - too slow 491 docs]
+    A2["Approach 2: - Cross-encoder only"] --> R2["❌ Accurate but - too slow 491 docs"]
     
-    A3[Approach 3: - Two-stage ✅] --> R3[✅ Best of both: - Fast + Accurate]
+    A3["Approach 3: - Two-stage ✅"] --> R3["✅ Best of both: - Fast + Accurate"]
     
     style R3 fill:#c8e6c9
 ```
@@ -179,19 +179,19 @@ graph TB
         D[Document: 'Apple reported revenue...']
         Q --> T[Tokenize]
         D --> T
-        T --> SEQ['[CLS] apple revenue 2024 [SEP] Apple reported revenue...[SEP]']
+        T --> SEQ["[CLS] apple revenue 2024 [SEP] Apple reported revenue...[SEP]"]
     end
     
     subgraph "Model Processing"
-        SEQ --> BERT[BERT/MiniLM Encoder]
-        BERT --> ATT[Self-Attention - Query tokens attend to doc tokens]
-        ATT --> CLS[CLS Token Representation - Contains interaction info]
+        SEQ --> BERT["BERT/MiniLM Encoder"]
+        BERT --> ATT["Self-Attention - Query tokens attend to doc tokens"]
+        ATT --> CLS["CLS Token Representation - Contains interaction info"]
     end
     
     subgraph "Scoring"
         CLS --> FC[Fully Connected Layer]
         FC --> SIG[Sigmoid]
-        SIG --> SCORE[Relevance Score: 0.95]
+        SIG --> SCORE["Relevance Score: 0.95"]
     end
     
     style ATT fill:#fff9c4
@@ -302,17 +302,17 @@ NDCG = 13.08 / 14.22 = 0.92
 ```mermaid
 graph LR
     subgraph "Before Reranking"
-        B1[Precision@5: 0.60]
-        B2[Recall@10: 0.65]
-        B3[MRR: 0.58]
-        B4[NDCG@10: 0.72]
+        B1["Precision@5: 0.60"]
+        B2["Recall@10: 0.65"]
+        B3["MRR: 0.58"]
+        B4["NDCG@10: 0.72"]
     end
     
     subgraph "After Reranking"
-        A1[Precision@5: 0.85 - +42%]
-        A2[Recall@10: 0.65 - Same]
-        A3[MRR: 0.78 - +34%]
-        A4[NDCG@10: 0.89 - +24%]
+        A1["Precision@5: 0.85 - +42%"]
+        A2["Recall@10: 0.65 - Same"]
+        A3["MRR: 0.78 - +34%"]
+        A4["NDCG@10: 0.89 - +24%"]
     end
     
     B1 --> A1
@@ -455,9 +455,9 @@ class Reranker:
 ```mermaid
 graph TD
     subgraph "Reranking Strategies"
-        S1[Strategy 1: - Retrieve 10, Rerank to 3] --> T1[Fast 30ms - Precision 0.75]
-        S2[Strategy 2: - Retrieve 15, Rerank to 5] --> T2[Medium 50ms - Precision 0.85 ✅]
-        S3[Strategy 3: - Retrieve 30, Rerank to 10] --> T3[Slow 100ms - Precision 0.90]
+        S1["Strategy 1: - Retrieve 10, Rerank to 3"] --> T1["Fast 30ms - Precision 0.75"]
+        S2["Strategy 2: - Retrieve 15, Rerank to 5"] --> T2["Medium 50ms - Precision 0.85 ✅"]
+        S3["Strategy 3: - Retrieve 30, Rerank to 10"] --> T3["Slow 100ms - Precision 0.90"]
     end
     
     style T2 fill:#c8e6c9

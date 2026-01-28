@@ -23,13 +23,13 @@
 ```mermaid
 graph LR
     subgraph "Traditional: One-Hot Encoding"
-        T1["'cat'"] --> V1["[0, 0, 1, 0, 0, ..., 0] - 50k dimensions - Sparse"]
-        T2["'dog'"] --> V2["[0, 1, 0, 0, 0, ..., 0] - 50k dimensions - Sparse"]
+        T1["'cat'"] --> V1["0, 0, 1, 0, 0, ..., 0 (50k dimensions, Sparse)"]
+        T2["'dog'"] --> V2["0, 1, 0, 0, 0, ..., 0 (50k dimensions, Sparse)"]
     end
     
     subgraph "Modern: Dense Embeddings"
-        T3["'cat'"] --> V3["[0.2, -0.5, 0.8, ...] - 384 dimensions - Dense"]
-        T4["'dog'"] --> V4["[0.3, -0.4, 0.7, ...] - 384 dimensions - Dense"]
+        T3["'cat'"] --> V3["0.2, -0.5, 0.8, ... (384 dimensions, Dense)"]
+        T4["'dog'"] --> V4["0.3, -0.4, 0.7, ... (384 dimensions, Dense)"]
     end
     
     V1 -.->|No similarity info| V2
@@ -101,9 +101,9 @@ emb3 = [0.01, -0.23, 0.89, ..., -0.34] # Different from emb1, emb2
 ```mermaid
 graph LR
     subgraph "Embedding Dimensions"
-        D1[Small: 128-384 dims] --> P1[✅ Fast search - ✅ Low memory - ⚠️ Less nuance]
-        D2[Medium: 768-1024 dims] --> P2[⚖️ Balanced - Standard choice]
-        D3[Large: 1536+ dims] --> P3[✅ Rich semantics - ❌ Slow search - ❌ High memory]
+        D1["Small: 128-384 dims"] --> P1["✅ Fast search - ✅ Low memory - ⚠️ Less nuance"]
+        D2["Medium: 768-1024 dims"] --> P2["⚖️ Balanced - Standard choice"]
+        D3["Large: 1536+ dims"] --> P3["✅ Rich semantics - ❌ Slow search - ❌ High memory"]
     end
     
     style D2 fill:#c8e6c9
@@ -133,9 +133,9 @@ $$
 ```mermaid
 graph TD
     subgraph "Cosine Similarity Intuition"
-        V1["Vector A: [1, 1] - 'cat kitten'"] 
-        V2["Vector B: [1.5, 1.5] - 'feline animal'"]
-        V3["Vector C: [1, -1] - 'car vehicle'"]
+        V1["Vector A: (1, 1) - 'cat kitten'"] 
+        V2["Vector B: (1.5, 1.5) - 'feline animal'"]
+        V3["Vector C: (1, -1) - 'car vehicle'"]
         
         V1 -->|Angle: 0° - Similarity: 1.0| V2
         V1 -->|Angle: 90° - Similarity: 0.0| V3
@@ -205,14 +205,14 @@ graph TB
         E2 --> V2[Vector 2]
         V1 -->|Similarity| V2
         
-        P1[✅ Fast: Precompute embeddings - ✅ Scalable to millions - ⚠️ Less accurate for fine-grained]
+        P1["✅ Fast: Precompute embeddings - ✅ Scalable to millions - ⚠️ Less accurate for fine-grained"]
     end
     
     subgraph "Cross-Encoder (Reranker)"
-        T3[Text 1 + Text 2] --> E3[Joint Encoder]
+        T3["Text 1 + Text 2"] --> E3[Joint Encoder]
         E3 --> S[Similarity Score]
         
-        P2[✅ Most accurate - ❌ Slow: Must compare all pairs - Used for reranking top-K]
+        P2["✅ Most accurate - ❌ Slow: Must compare all pairs - Used for reranking top-K"]
     end
     
     style E1 fill:#c8e6c9
@@ -238,13 +238,13 @@ graph TB
 ```mermaid
 graph LR
     subgraph "Pretrained Model"
-        P[BGE pretrained - on general web text] --> F[Your financial domain]
+        P["BGE pretrained - on general web text"] --> F[Your financial domain]
     end
     
     subgraph "Fine-Tuning Process"
-        F --> D[Create pairs: - Query → Relevant Doc]
-        D --> T[Train with - contrastive loss]
-        T --> M[Fine-tuned model - Better on 10-K filings]
+        F --> D["Create pairs: - Query → Relevant Doc"]
+        D --> T["Train with - contrastive loss"]
+        T --> M["Fine-tuned model - Better on 10-K filings"]
     end
     
     style P fill:#e3f2fd
@@ -381,13 +381,13 @@ graph TD
         
         D2{Accuracy?}
         Small --> D2
-        D2 -->|Good enough| S1[MiniLM, BGE-small]
-        D2 -->|Need better| S2[Fine-tune or use larger]
+        D2 -->|Good enough| S1["MiniLM, BGE-small"]
+        D2 -->|Need better| S2["Fine-tune or use larger"]
         
         D3{Domain?}
         Medium --> D3
-        D3 -->|General| G1[BGE, E5]
-        D3 -->|Specialized| G2[Fine-tune on domain]
+        D3 -->|General| G1["BGE, E5"]
+        D3 -->|Specialized| G2["Fine-tune on domain"]
     end
     
     style S1 fill:#c8e6c9
@@ -443,11 +443,11 @@ distances, indices = self.index.search(
 graph TB
     subgraph "BGE-small-en-v1.5 Architecture"
         I[Input Text] --> T[BERT Tokenizer]
-        T --> E[BERT Encoder - 12 layers, 768 hidden]
-        E --> P[Pooling - CLS token or mean]
-        P --> L[Linear Projection - 768 → 384 dims]
+        T --> E["BERT Encoder - 12 layers, 768 hidden"]
+        E --> P["Pooling - CLS token or mean"]
+        P --> L["Linear Projection - 768 → 384 dims"]
         L --> N[L2 Normalization]
-        N --> O[Output Embedding - 384 dims, norm=1]
+        N --> O["Output Embedding - 384 dims, norm=1"]
     end
     
     style I fill:#e3f2fd

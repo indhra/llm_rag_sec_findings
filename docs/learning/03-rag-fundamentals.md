@@ -24,17 +24,17 @@ LLMs have **knowledge cutoff** and **hallucination** issues:
 ```mermaid
 graph TD
     subgraph "Problems with Pure LLMs"
-        P1[❌ Knowledge Cutoff - Training data ends 2023]
-        P2[❌ No Private Data - Can't access your docs]
-        P3[❌ Hallucinations - Makes up plausible-sounding facts]
-        P4[❌ Can't Cite Sources - No verifiability]
+        P1["❌ Knowledge Cutoff - Training data ends 2023"]
+        P2["❌ No Private Data, Can't access your docs"]
+        P3["❌ Hallucinations - Makes up plausible-sounding facts"]
+        P4["❌ Can't Cite Sources, No verifiability"]
     end
     
     subgraph "RAG Solution"
-        S1[✅ Fresh Information - Retrieve latest docs]
-        S2[✅ Private Data Access - Search your knowledge base]
-        S3[✅ Grounded Answers - Based on retrieved context]
-        S4[✅ Citations - Point to source documents]
+        S1["✅ Fresh Information - Retrieve latest docs"]
+        S2["✅ Private Data Access - Search your knowledge base"]
+        S3["✅ Grounded Answers - Based on retrieved context"]
+        S4["✅ Citations - Point to source documents"]
     end
     
     P1 --> S1
@@ -98,21 +98,21 @@ sequenceDiagram
 ```mermaid
 graph TB
     subgraph "Indexing Pipeline"
-        D1[📄 Apple 10-K - Tesla 10-K] --> P[PyMuPDF Parser]
-        P --> C[Section-Aware Chunker - 512 tokens, 100 overlap]
-        C --> E[BGE Embeddings - 384 dims]
-        E --> V[(FAISS Index - 491 chunks)]
-        C --> B[(BM25 Index)]
+        D1["📄 Apple 10-K - Tesla 10-K"] --> P[PyMuPDF Parser]
+        P --> C["Section-Aware Chunker - 512 tokens, 100 overlap"]
+        C --> E["BGE Embeddings - 384 dims"]
+        E --> V["(FAISS Index - 491 chunks)"]
+        C --> B["(BM25 Index)"]
     end
     
     subgraph "Query Pipeline"
-        Q[❓ User Query] --> Q1[Embed Query - BGE model]
-        Q1 --> H[Hybrid Search - 70% vector + 30% BM25]
+        Q[❓ User Query] --> Q1["Embed Query - BGE model"]
+        Q1 --> H["Hybrid Search - 70% vector + 30% BM25"]
         V --> H
         B --> H
-        H --> R[Reranker - Cross-Encoder - Top 15 → Top 5]
-        R --> LLM[Groq Llama 3.1 8B - + Grounding Prompt]
-        LLM --> A[✅ Answer + Citations]
+        H --> R["Reranker - Cross-Encoder - Top 15 → Top 5"]
+        R --> LLM["Groq Llama 3.1 8B - + Grounding Prompt"]
+        LLM --> A["✅ Answer + Citations"]
     end
     
     style H fill:#fff9c4
@@ -139,13 +139,13 @@ graph TB
 ```mermaid
 graph LR
     subgraph "Without Chunking"
-        W1[Entire 130-page 10-K] --> W2[One huge embedding]
-        W2 --> W3[❌ Loss of granularity - ❌ Exceeds context window - ❌ Poor retrieval precision]
+        W1["Entire 130-page 10-K"] --> W2[One huge embedding]
+        W2 --> W3["❌ Loss of granularity - ❌ Exceeds context window - ❌ Poor retrieval precision"]
     end
     
     subgraph "With Chunking"
-        C1[130-page 10-K] --> C2[491 chunks - 512 tokens each]
-        C2 --> C3[✅ Precise retrieval - ✅ Manageable size - ✅ Better embeddings]
+        C1["130-page 10-K"] --> C2["491 chunks - 512 tokens each"]
+        C2 --> C3["✅ Precise retrieval - ✅ Manageable size - ✅ Better embeddings"]
     end
     
     style W3 fill:#ffcdd2
@@ -157,15 +157,15 @@ graph LR
 ```mermaid
 graph TD
     subgraph "Chunking Strategies"
-        S1[Fixed-Size] --> D1[Split every N tokens - ✅ Simple - ⚠️ Breaks mid-sentence]
+        S1["Fixed-Size"] --> D1["Split every N tokens - ✅ Simple - ⚠️ Breaks mid-sentence"]
         
-        S2[Sentence-Based] --> D2[Split on sentences - ✅ Semantic boundaries - ⚠️ Variable size]
+        S2["Sentence-Based"] --> D2["Split on sentences - ✅ Semantic boundaries - ⚠️ Variable size"]
         
-        S3[Paragraph-Based] --> D3[Split on paragraphs - ✅ Natural units - ⚠️ Size variance]
+        S3["Paragraph-Based"] --> D3["Split on paragraphs - ✅ Natural units - ⚠️ Size variance"]
         
-        S4[Semantic] --> D4[Split on topic changes - ✅ Most coherent - ❌ Complex, slow]
+        S4[Semantic] --> D4["Split on topic changes - ✅ Most coherent - ❌ Complex, slow"]
         
-        S5[Section-Aware ⭐] --> D5[Respect doc structure - ✅ Preserves context - ✅ Better citations - Your project]
+        S5["Section-Aware ⭐"] --> D5["Respect doc structure - ✅ Preserves context - ✅ Better citations - Your project"]
     end
     
     style S5 fill:#c8e6c9
@@ -199,8 +199,8 @@ chunk_overlap = 100  # 20% overlap prevents boundary loss
 ```mermaid
 graph TB
     subgraph "Section-Aware Strategy"
-        DOC[10-K Document] --> S1[Item 1: Business]
-        DOC --> S2[Item 7: MD&A]
+        DOC["10-K Document"] --> S1["Item 1: Business"]
+        DOC --> S2["Item 7: MD&A"]
         DOC --> S3[Financial Statements]
         
         S1 --> C1[Chunk with metadata: - section='Item 1', page=3]
@@ -208,7 +208,7 @@ graph TB
         S3 --> C3[Chunk with metadata: - section='Statements', page=67]
     end
     
-    C1 --> R[Better Retrieval: - Can filter by section]
+    C1 --> R["Better Retrieval: - Can filter by section"]
     C2 --> R
     C3 --> R
     
@@ -243,9 +243,9 @@ graph TB
 graph LR
     subgraph "Vector Search"
         Q[Query: 'revenue 2024'] --> E[Embed]
-        E --> V[Vector: - [0.2, -0.5, 0.8, ...]]
-        V --> S[Similarity Search - in FAISS]
-        S --> R[Top chunks by - cosine similarity]
+        E --> V["Vector: 0.2, -0.5, 0.8, ..."]
+        V --> S["Similarity Search - in FAISS"]
+        S --> R["Top chunks by - cosine similarity"]
     end
     
     subgraph "Strengths"
@@ -274,9 +274,9 @@ Missed: "Q4 2024" (no semantic overlap) ❌
 ```mermaid
 graph LR
     subgraph "BM25 Search"
-        Q[Query: '2024 Q4'] --> T[Tokenize: - '2024', 'Q4']
+        Q["Query: '2024 Q4'"] --> T["Tokenize: '2024', 'Q4'"]
         T --> S[BM25 Scoring]
-        S --> R[Top chunks by - keyword match]
+        S --> R["Top chunks by - keyword match"]
     end
     
     subgraph "Strengths"
@@ -301,10 +301,10 @@ Missed: "fiscal year ending September 2024" ❌
 
 ```mermaid
 graph TD
-    Q[Query] --> V[Vector Search - Top 20]
-    Q --> B[BM25 Search - Top 20]
+    Q[Query] --> V["Vector Search - Top 20"]
+    Q --> B["BM25 Search - Top 20"]
     
-    V --> M[Merge + Rerank - 70% vector + 30% BM25]
+    V --> M["Merge + Rerank - 70% vector + 30% BM25"]
     B --> M
     
     M --> F[Final Top 15]
@@ -350,10 +350,10 @@ Query: "Apple total revenue fiscal year 2024"
 ```mermaid
 graph LR
     subgraph "128k Token Context Window"
-        S[System Prompt: - ~500 tokens] --> R[Retrieved Context: - ~3500 tokens]
-        R --> Q[User Query: - ~50 tokens]
-        Q --> O[Output Budget: - ~1000 tokens]
-        O --> B[Buffer: - ~123k tokens]
+        S["System Prompt: - ~500 tokens"] --> R["Retrieved Context: - ~3500 tokens"]
+        R --> Q["User Query: - ~50 tokens"]
+        Q --> O["Output Budget: - ~1000 tokens"]
+        O --> B["Buffer: - ~123k tokens"]
     end
     
     style R fill:#fff9c4
@@ -382,14 +382,14 @@ Total used: ~4100 tokens (3% of 128k window)
 ```mermaid
 graph TD
     subgraph "LLM Attention on Long Context"
-        C1[Chunk 1 - Strong attention ✅] 
-        C2[Chunk 2 - Medium]
-        C3[Chunk 3 - Weak ⚠️]
-        C4[Chunk 4 - Weak ⚠️]
-        C5[Chunk 5 - Strong attention ✅]
+        C1["Chunk 1 - Strong attention ✅"] 
+        C2["Chunk 2 - Medium"]
+        C3["Chunk 3 - Weak ⚠️"]
+        C4["Chunk 4 - Weak ⚠️"]
+        C5["Chunk 5 - Strong attention ✅"]
     end
     
-    A[LLMs attend best to - START and END of context]
+    A["LLMs attend best to - START and END of context"]
     
     C1 --> A
     C5 --> A
@@ -429,7 +429,7 @@ graph LR
     V --> L[LLM]
     L --> A[Answer]
     
-    P[❌ Issues: - Poor retrieval - No reranking - Basic prompts]
+    P["❌ Issues: - Poor retrieval - No reranking - Basic prompts"]
     
     style V fill:#ffcdd2
 ```
@@ -438,13 +438,13 @@ graph LR
 
 ```mermaid
 graph TB
-    Q[Query] --> QE[Query Enhancement - Future: HyDE, multi-query]
-    QE --> H[Hybrid Search - Vector 70% + BM25 30%]
-    H --> R[Reranking - Cross-Encoder - Top 15 → Top 5]
-    R --> C[Context Compression - Future: LLMLingua]
-    C --> L[LLM + Grounding Prompt - Cites sources]
-    L --> V[Verify Citations - Extract metadata]
-    V --> A[Answer + Sources]
+    Q[Query] --> QE["Query Enhancement - Future: HyDE, multi-query"]
+    QE --> H["Hybrid Search - Vector 70% + BM25 30%"]
+    H --> R["Reranking - Cross-Encoder - Top 15 → Top 5"]
+    R --> C["Context Compression - Future: LLMLingua"]
+    C --> L["LLM + Grounding Prompt - Cites sources"]
+    L --> V["Verify Citations - Extract metadata"]
+    V --> A["Answer + Sources"]
     
     style H fill:#c8e6c9
     style R fill:#c8e6c9
@@ -480,7 +480,7 @@ graph LR
     B --> C[Embed with BGE]
     C --> D[Index in FAISS]
     D --> E[Hybrid search]
-    E --> F[Rerank top-K]
+    E --> F["Rerank top-K"]
     F --> G[LLM generation]
     
     style E fill:#fff9c4

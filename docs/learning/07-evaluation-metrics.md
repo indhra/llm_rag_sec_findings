@@ -23,13 +23,13 @@
 graph TD
     subgraph "RAG System Complexity"
         R[Retrieval] --> G[Generation]
-        R -.-> P1[Did we get the right docs?]
-        G -.-> P2[Is the answer correct?]
-        G -.-> P3[Is it grounded in context?]
-        G -.-> P4[Are citations accurate?]
+        R -.-> P1["Did we get the right docs?"]
+        G -.-> P2["Is the answer correct?"]
+        G -.-> P3["Is it grounded in context?"]
+        G -.-> P4["Are citations accurate?"]
     end
     
-    P1 --> E[Need Evaluation - at Every Stage]
+    P1 --> E["Need Evaluation - at Every Stage"]
     P2 --> E
     P3 --> E
     P4 --> E
@@ -55,9 +55,9 @@ graph TD
 ```mermaid
 graph LR
     subgraph "Retrieval Quality"
-        R[Retrieved Docs] --> M1[Precision: - Relevant / Retrieved]
-        R --> M2[Recall: - Relevant Retrieved / Total Relevant]
-        M1 --> M3[F1 Score: - Harmonic mean]
+        R[Retrieved Docs] --> M1["Precision: - Relevant / Retrieved"]
+        R --> M2["Recall: - Relevant Retrieved / Total Relevant"]
+        M1 --> M3["F1 Score: - Harmonic mean"]
         M2 --> M3
     end
     
@@ -103,11 +103,11 @@ Recall@10 = 7/12 = 0.58
 ```mermaid
 graph TD
     subgraph "The Tradeoff"
-        K1[K=5 - High Precision - Low Recall] --> T[Retrieval Cutoff K]
-        T --> K2[K=20 - Lower Precision - Higher Recall]
+        K1["K=5 - High Precision - Low Recall"] --> T[Retrieval Cutoff K]
+        T --> K2["K=20 - Lower Precision - Higher Recall"]
     end
     
-    K1 -.->|Good for| U1[Cost-sensitive apps]
+    K1 -.->|Good for| U1["Cost-sensitive apps"]
     K2 -.->|Good for| U2[Comprehensive search]
     
     style T fill:#fff9c4
@@ -151,11 +151,11 @@ $$
 ```mermaid
 graph LR
     subgraph "NDCG Example"
-        R1[Rank 1: Relevance 3 - Score: 3/log2 = 3.0]
-        R2[Rank 2: Relevance 2 - Score: 2/log3 = 1.26]
-        R3[Rank 3: Relevance 1 - Score: 1/log4 = 0.5]
+        R1["Rank 1: Relevance 3 - Score: 3/log2 = 3.0"]
+        R2["Rank 2: Relevance 2 - Score: 2/log3 = 1.26"]
+        R3["Rank 3: Relevance 1 - Score: 1/log4 = 0.5"]
         
-        R1 --> SUM[DCG = 4.76]
+        R1 --> SUM["DCG = 4.76"]
         R2 --> SUM
         R3 --> SUM
     end
@@ -241,13 +241,13 @@ def semantic_similarity(text1, text2):
 ```mermaid
 graph TB
     subgraph "RAGAS Metrics"
-        R[RAG System] --> M1[Faithfulness - Answer grounded in context?]
-        R --> M2[Answer Relevance - Addresses the question?]
-        R --> M3[Context Precision - Retrieved context useful?]
-        R --> M4[Context Recall - All needed info retrieved?]
+        R[RAG System] --> M1["Faithfulness - Answer grounded in context?"]
+        R --> M2["Answer Relevance - Addresses the question?"]
+        R --> M3["Context Precision - Retrieved context useful?"]
+        R --> M4["Context Recall - All needed info retrieved?"]
     end
     
-    M1 --> E[LLM-as-Judge - Evaluation]
+    M1 --> E["LLM-as-Judge - Evaluation"]
     M2 --> E
     M3 --> E
     M4 --> E
@@ -479,9 +479,9 @@ outputs/
 ```mermaid
 graph LR
     subgraph "A/B Testing Different Configs"
-        C1[Config 1: - top_k=10, no rerank] --> R1[Accuracy: 77%]
-        C2[Config 2: - top_k=15, with rerank] --> R2[Accuracy: 92% ✅]
-        C3[Config 3: - vector-only] --> R3[Accuracy: 69%]
+        C1["Config 1: - top_k=10, no rerank"] --> R1["Accuracy: 77%"]
+        C2["Config 2: - top_k=15, with rerank"] --> R2["Accuracy: 92% ✅"]
+        C3["Config 3: - vector-only"] --> R3["Accuracy: 69%"]
     end
     
     style R2 fill:#c8e6c9
@@ -505,13 +505,13 @@ graph LR
 
 ```mermaid
 graph TB
-    T[13-question test dataset] --> S[RAG System]
-    S --> M1[Factual Accuracy: - 12/13 = 92%]
-    S --> M2[Citation Coverage: - 13/13 = 100%]
-    S --> M3[Out-of-Scope Detection: - 3/3 = 100%]
-    S --> M4[Avg Latency: - 3.2s]
+    T["13-question test dataset"] --> S[RAG System]
+    S --> M1["Factual Accuracy: - 12/13 = 92%"]
+    S --> M2["Citation Coverage: - 13/13 = 100%"]
+    S --> M3["Out-of-Scope Detection: - 3/3 = 100%"]
+    S --> M4["Avg Latency: - 3.2s"]
     
-    M1 --> R[Automated - Evaluation Report]
+    M1 --> R["Automated - Evaluation Report"]
     M2 --> R
     M3 --> R
     M4 --> R

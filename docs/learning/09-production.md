@@ -24,9 +24,9 @@
 ```mermaid
 graph TB
     subgraph "Development (Your Current Setup)"
-        D1[Local files - 2 PDFs]
-        D2[FAISS in-memory - 491 chunks]
-        D3[Groq API - Free tier]
+        D1["Local files - 2 PDFs"]
+        D2["FAISS in-memory - 491 chunks"]
+        D3["Groq API - Free tier"]
         D4[No caching]
         D5[Simple error handling]
         
@@ -44,13 +44,13 @@ graph TB
 ```mermaid
 graph TB
     subgraph "Production Environment"
-        P1[Cloud storage - 1000s of PDFs]
-        P2[Vector DB - Pinecone/Weaviate - Millions of chunks]
-        P3[LLM API - Load balancing - Rate limiting]
-        P4[Redis cache - 30% hit rate]
-        P5[Circuit breakers - Retry logic - Fallbacks]
-        P6[Monitoring - Metrics - Alerts]
-        P7[A/B testing - Gradual rollout]
+        P1["Cloud storage - 1000s of PDFs"]
+        P2["Vector DB - Pinecone/Weaviate - Millions of chunks"]
+        P3["LLM API - Load balancing - Rate limiting"]
+        P4["Redis cache - 30% hit rate"]
+        P5["Circuit breakers - Retry logic - Fallbacks"]
+        P6["Monitoring - Metrics - Alerts"]
+        P7["A/B testing - Gradual rollout"]
         
         P1 --> P2
         P2 --> P3
@@ -84,11 +84,11 @@ graph TB
 
 ```mermaid
 graph LR
-    Q[Query] --> E[Embedding - 50ms]
-    E --> H[Hybrid Search - Vector: 5ms - BM25: 10ms]
-    H --> R[Reranking - 50ms]
-    R --> L[LLM Generation - 3000ms]
-    L --> T[Total: 3.2s]
+    Q[Query] --> E["Embedding - 50ms"]
+    E --> H["Hybrid Search - Vector: 5ms - BM25: 10ms"]
+    H --> R["Reranking - 50ms"]
+    R --> L["LLM Generation - 3000ms"]
+    L --> T["Total: 3.2s"]
     
     style L fill:#ffcdd2
     style T fill:#fff9c4
@@ -291,12 +291,12 @@ llm_cost = 0.0177  # (1500*10 + 150*30)/1M
 ```mermaid
 graph TB
     Q[Query] --> C{Cache Check}
-    C -->|Hit| R1[Return cached answer - 0ms, $0]
+    C -->|Hit| R1["Return cached answer - 0ms, $0"]
     C -->|Miss| E[Embed query]
     E --> S[Search]
     S --> Re[Rerank]
     Re --> L[LLM]
-    L --> R2[Cache result - Return answer]
+    L --> R2["Cache result - Return answer"]
     
     style R1 fill:#c8e6c9
     style R2 fill:#fff9c4
@@ -426,13 +426,13 @@ semantic_hit_rate = 0.10 + 0.25 = 0.35  # 35% savings
 ```mermaid
 graph TB
     Q[Query] --> E1{Embedding fails?}
-    E1 -->|Yes| F1[Retry 3x - Fallback to BM25 only]
+    E1 -->|Yes| F1["Retry 3x - Fallback to BM25 only"]
     E1 -->|No| S{Search fails?}
-    S -->|Yes| F2[Return cached - or error message]
+    S -->|Yes| F2["Return cached - or error message"]
     S -->|No| R{Reranking fails?}
-    R -->|Yes| F3[Skip reranking - Use hybrid scores]
+    R -->|Yes| F3["Skip reranking - Use hybrid scores"]
     R -->|No| L{LLM fails?}
-    L -->|Yes| F4[Retry with backoff - Use fallback model]
+    L -->|Yes| F4["Retry with backoff - Use fallback model"]
     L -->|No| OK[Success]
     
     style F1 fill:#ffcdd2

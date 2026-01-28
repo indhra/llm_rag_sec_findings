@@ -61,7 +61,7 @@ graph LR
     style E fill:#e3f2fd
     
     G[⚠️ Issues] --> H[Sequential → Slow]
-    G --> I[Long-term dependencies lost]
+    G --> I["Long-term dependencies lost"]
     G --> J[Vanishing gradients]
 ```
 
@@ -71,7 +71,7 @@ graph LR
 |--------------|------|------|-------|
 | **RNN** | Simple, sequential | Poor long-term memory | Slow (sequential) |
 | **LSTM** | Better memory | Complex, still sequential | Slow |
-| **Transformer** | ✅ Parallel processing - ✅ Long-range dependencies - ✅ Attention mechanism | Large memory requirements | **Fast** (parallel) |
+| **Transformer** | ✅ Parallel processing, ✅ Long-range dependencies, ✅ Attention mechanism | Large memory requirements | **Fast** (parallel) |
 
 ---
 
@@ -82,31 +82,31 @@ The transformer architecture from "Attention is All You Need" (2017) revolutioni
 ```mermaid
 graph TB
     subgraph "Input Processing"
-        A[Input Text: - 'The cat sat'] --> B[Tokenization: - [The, cat, sat]]
-        B --> C[Token Embeddings - 384/768/1024 dims]
-        C --> D[+ Positional Encoding]
+        A["Input Text: 'The cat sat'"] --> B["Tokenization: The, cat, sat"]
+        B --> C["Token Embeddings (384/768/1024 dims)"]
+        C --> D["+ Positional Encoding"]
     end
     
     subgraph "Encoder (BERT-style)"
-        D --> E1[Multi-Head - Self-Attention]
-        E1 --> E2[Add & Norm]
-        E2 --> E3[Feed Forward]
-        E3 --> E4[Add & Norm]
-        E4 --> E5[Context Vectors]
+        D --> E1["Multi-Head Self-Attention"]
+        E1 --> E2["Add & Norm"]
+        E2 --> E3["Feed Forward"]
+        E3 --> E4["Add & Norm"]
+        E4 --> E5["Context Vectors"]
     end
     
     subgraph "Decoder (GPT-style)"
-        D2[Previous Tokens] --> D1[Masked - Self-Attention]
-        D1 --> D2A[Add & Norm]
-        E5 --> D3[Cross-Attention]
+        D2["Previous Tokens"] --> D1["Masked Self-Attention"]
+        D1 --> D2A["Add & Norm"]
+        E5 --> D3["Cross-Attention"]
         D2A --> D3
-        D3 --> D4[Add & Norm]
-        D4 --> D5[Feed Forward]
-        D5 --> D6[Add & Norm]
+        D3 --> D4["Add & Norm"]
+        D4 --> D5["Feed Forward"]
+        D5 --> D6["Add & Norm"]
     end
     
-    D6 --> F[Linear + Softmax]
-    F --> G[Next Token - Probabilities]
+    D6 --> F["Linear + Softmax"]
+    F --> G["Next Token Probabilities"]
     
     style E1 fill:#fff9c4
     style D1 fill:#fff9c4
@@ -134,16 +134,16 @@ final_embedding = token_embedding + position_encoding
 ```mermaid
 graph TD
     subgraph "Self-Attention for 'bank'"
-        W1[Input: 'The river bank'] --> Q[Query: What am I looking for?]
-        W1 --> K[Key: What do I represent?]
-        W1 --> V[Value: What information do I carry?]
+        W1["Input: 'The river bank'"] --> Q["Query: What am I looking for?"]
+        W1 --> K["Key: What do I represent?"]
+        W1 --> V["Value: What information do I carry?"]
         
-        Q --> S[Similarity Scores]
+        Q --> S["Similarity Scores"]
         K --> S
-        S --> A[Attention Weights - river: 0.7, the: 0.1, bank: 0.2]
-        A --> O[Weighted Sum of Values]
+        S --> A["Attention Weights (river: 0.7, the: 0.1, bank: 0.2)"]
+        A --> O["Weighted Sum of Values"]
         V --> O
-        O --> OUT[Context-aware 'bank' - → riverbank, not financial]
+        O --> OUT["Context-aware 'bank' → riverbank, not financial"]
     end
     
     style S fill:#fff9c4
@@ -170,18 +170,18 @@ Instead of one attention mechanism, use multiple "heads" to capture different re
 ```mermaid
 graph LR
     subgraph "Multi-Head Attention"
-        I[Input] --> H1[Head 1: - Syntactic patterns]
-        I --> H2[Head 2: - Semantic meaning]
-        I --> H3[Head 3: - Long-range deps]
-        I --> H4[Head 4-8: - Other patterns]
+        I["Input"] --> H1["Head 1: Syntactic patterns"]
+        I --> H2["Head 2: Semantic meaning"]
+        I --> H3["Head 3: Long-range deps"]
+        I --> H4["Head 4-8: Other patterns"]
         
-        H1 --> C[Concatenate]
+        H1 --> C["Concatenate"]
         H2 --> C
         H3 --> C
         H4 --> C
         
-        C --> L[Linear Layer]
-        L --> O[Output]
+        C --> L["Linear Layer"]
+        L --> O["Output"]
     end
     
     style H1 fill:#e3f2fd
@@ -206,17 +206,17 @@ Think of attention as a **similarity search**:
 
 ```mermaid
 graph TD
-    Q[Query: 'bank' - What context do I need?] --> S1{Compare with - each word}
+    Q["Query: 'bank' - What context do I need?"] --> S1{"Compare with each word"}
     
-    S1 --> K1[Key: 'river' - Score: 0.9 ✅]
-    S1 --> K2[Key: 'the' - Score: 0.1]
-    S1 --> K3[Key: 'bank' - Score: 0.3]
+    S1 --> K1["Key: 'river' - Score: 0.9 ✅"]
+    S1 --> K2["Key: 'the' - Score: 0.1"]
+    S1 --> K3["Key: 'bank' - Score: 0.3"]
     
-    K1 --> W[Weighted combination]
+    K1 --> W["Weighted combination"]
     K2 --> W
     K3 --> W
     
-    W --> O[Context-aware - 'bank' = riverbank]
+    W --> O["Context-aware 'bank' = riverbank"]
     
     style K1 fill:#c8e6c9
     style O fill:#66bb6a
@@ -265,15 +265,15 @@ graph LR
 
 ```mermaid
 graph TD
-    T[Text: 'tokenization'] --> M{Method?}
+    T["Text: 'tokenization'"] --> M{"Method?"}
     
-    M -->|Character-level| C1[t, o, k, e, n, i, z, a, t, i, o, n]
-    M -->|Word-level| W1[tokenization]
-    M -->|Subword BPE| S1[token, ization]
+    M -->|"Character-level"| C1["t, o, k, e, n, i, z, a, t, i, o, n"]
+    M -->|"Word-level"| W1["tokenization"]
+    M -->|"Subword BPE"| S1["token, ization"]
     
-    C1 --> CP[Pros: Small vocab - Cons: Long sequences]
-    W1 --> WP[Pros: Meaningful units - Cons: OOV problems]
-    S1 --> SP[Pros: Balance - Cons: Complex encoding]
+    C1 --> CP["Pros: Small vocab, Cons: Long sequences"]
+    W1 --> WP["Pros: Meaningful units, Cons: OOV problems"]
+    S1 --> SP["Pros: Balance, Cons: Complex encoding"]
     
     style S1 fill:#c8e6c9
 ```
@@ -378,13 +378,13 @@ graph LR
         U1[Text Classification] --> BERT
         U2[Question Answering] --> BERT
         U3[Text Generation] --> GPT
-        U4[Chat/Completion] --> GPT
-        U5[Translation] --> T5[Encoder-Decoder]
+        U4["Chat/Completion"] --> GPT
+        U5[Translation] --> T5["Encoder-Decoder"]
         U6[Summarization] --> T5
     end
     
-    BERT[BERT - Bidirectional Encoder]
-    GPT[GPT - Decoder-only]
+    BERT["BERT (Bidirectional Encoder)"]
+    GPT["GPT (Decoder-only)"]
     
     style BERT fill:#e3f2fd
     style GPT fill:#f8bbd0
