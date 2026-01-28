@@ -7,7 +7,8 @@
 **Author:** Indhra  
 **Date:** January 2026
 
-📄 **[Design Report](design_report.md)** - Detailed explanations of all design decisions
+📄 **[Design Report](design_report.md)** - Detailed explanations of all design decisions  
+📚 **[Learning Path](docs/learning/README.md)** - Complete LLM & RAG learning materials (fundamentals to interview prep)
 
 ---
 

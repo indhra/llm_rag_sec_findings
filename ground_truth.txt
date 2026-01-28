@@ -1,0 +1,74 @@
+questions
+
+[
+{"question_id": 1, "question": "What was Apples total revenue for the fiscal year ended
+September 28, 2024?"},
+{"question_id": 2, "question": "How many shares of common stock were issued and outstanding as
+of October 18, 2024?"},
+{"question_id": 3, "question": "What is the total amount of term debt (current + non-current)
+reported by Apple as of September 28, 2024?"},
+{"question_id": 4, "question": "On what date was Apples 10-K report for 2024 signed and filed
+with the SEC?"},
+{"question_id": 5, "question": "Does Apple have any unresolved staff comments from the SEC as
+of this filing? How do you know?"},
+{"question_id": 6, "question": "What was Teslas total revenue for the year ended December 31,
+2023?"},
+{"question_id": 7, "question": "What percentage of Teslas total revenue in 2023 came from
+Automotive Sales (excluding Leasing)?"},
+{"question_id": 8, "question": "What is the primary reason Tesla states for being highly
+dependent on Elon Musk?"},
+{"question_id": 9, "question": "What types of vehicles does Tesla currently produce and
+deliver?"},
+{"question_id": 10, "question": "What is the purpose of Teslas ’lease pass-through fund
+arrangements’?"},
+{"question_id": 11, "question": "What is Teslas stock price forecast for 2025?"},
+{"question_id": 12, "question": "Who is the CFO of Apple as of 2025?"},
+{"question_id": 13, "question": "What color is Teslas headquarters painted?"}
+]
+
+
+
+-------------
+1 Apple’s total revenue FY 2024 $391,036 million Apple 10-K, Item 8, p.
+282
+2 Apple’s common stock out-
+standing (Oct 18, 2024)
+15,115,823,000 shares Apple 10-K, first para-
+graph
+3 Apple’s total term debt (Sept
+28, 2024)
+$96,662 million Apple 10-K, Item 8,
+Note 9, p. 394
+4 Filing date of Apple’s 2024 10-
+K
+November 1, 2024 Apple 10-K, Signature
+page
+5 Unresolved SEC staff com-
+ments?
+No. Checkmark indicates
+“No” under Item 1B
+Apple 10-K, Item 1B, p.
+176
+6 Tesla’s total revenue FY 2023 $96,773 million Tesla 10-K, Item 7
+7 Tesla revenue from Automo-
+tive Sales
+∼84% ($81,924M / $96,773M) Tesla 10-K, Item 7
+8 Tesla’s dependency on Elon
+Musk
+Central to strategy, innova-
+tion, leadership; loss could
+disrupt
+Tesla 10-K, Item 1A
+9 Tesla’s current vehicles Model S, Model 3, Model X,
+Model Y, Cybertruck
+Tesla 10-K, Item 1
+10 Tesla’s lease pass-through ar-
+rangements
+Finance solar systems with in-
+vestors; customers sign PPAs
+Tesla 10-K, Item 7
+11 Tesla’s stock price forecast
+2025
+Not answerable N/A
+12 Apple CFO (2025) Not answerable N/A
+13 Tesla HQ color Not answerable N/A

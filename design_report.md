@@ -221,7 +221,90 @@ Response: "This question requires data not present in the provided documents..."
 
 ---
 
-## 4. Citation Grounding
+## 4. System Prompt Engineering (Research-Backed)
+
+The system prompt is the most critical component for RAG accuracy. Our prompt was designed using research-backed principles from:
+
+- **Anthropic's "Building Effective Agents"** - Structured prompting patterns
+- **OpenAI's Prompt Engineering Guide** - Message formatting with XML/Markdown
+- **Azure AI Hallucination Mitigation** - Grounding techniques
+- **Chain-of-Thought (CoT) for Financial Analysis** (CFI) - Step-by-step reasoning
+- **ScopeQA Research** (arxiv:2410.14567) - Out-of-scope question handling
+- **FinanceBench RAG Patterns** - Domain-specific financial accuracy
+
+### 4.1 Key Prompt Components
+
+```mermaid
+graph TB
+    subgraph "System Prompt Structure"
+        A[🎭 IDENTITY & ROLE<br/>Senior Financial Analyst AI] --> B[📚 DOCUMENT AWARENESS<br/>Apple 10-K FY2024<br/>Tesla 10-K FY2023]
+        B --> C[🔒 GROUNDING RULES<br/>5 Critical Rules]
+        C --> D[🚫 REFUSAL PROTOCOL<br/>5 Out-of-Scope Categories]
+        D --> E[📝 RESPONSE STRUCTURE<br/>Chain-of-Thought Format]
+        E --> F[✅ QUALITY STANDARDS<br/>& Examples]
+    end
+    
+    style A fill:#e3f2fd
+    style C fill:#ffcdd2
+    style D fill:#fff9c4
+    style F fill:#c8e6c9
+```
+
+### 4.2 Grounding Rules (Prevents Hallucination)
+
+| Rule | Purpose | Implementation |
+|------|---------|----------------|
+| **CONTEXT-ONLY** | Prevent training data leakage | "NEVER use knowledge from your training data" |
+| **Numerical Precision** | Exact number quoting | "$391,036 million" not "$391 billion" |
+| **Complete Enumeration** | No list truncation | "Include ALL items mentioned" |
+| **Explicit Citation** | Verifiable sources | Format: ["Doc", "Section", "p. N"] |
+| **Yes/No Verification** | Direct quotes for confirmation | "Quote the exact text" |
+
+### 4.3 Refusal Protocol (5 Categories)
+
+| Category | Trigger Patterns | Response Strategy |
+|----------|-----------------|-------------------|
+| **A: Future/Predictive** | "will", "forecast", "2025" | "I can only provide information from SEC filings..." |
+| **B: Investment Advice** | "should I buy", "recommend" | "I cannot provide investment advice..." |
+| **C: External Data** | "compare to Google", other companies | "This requires data not in provided documents..." |
+| **D: Not in Context** | Answer not in retrieved chunks | "This specific information is not found..." |
+| **E: Post-Filing Date** | Events after filing date | "This asks about information after filing date..." |
+
+### 4.4 User Prompt Structure
+
+```
+<retrieved_context>
+## Apple Inc. 10-K (FY2024)
+<context id="1" source="[Apple 10-K, Item 8, p. 32]">
+[chunk text]
+</context>
+
+## Tesla Inc. 10-K (FY2023)
+<context id="2" source="[Tesla 10-K, Item 1, p. 7]">
+[chunk text]
+</context>
+</retrieved_context>
+
+<user_question>
+[User's question here]
+</user_question>
+
+<instructions>
+1. Answer using ONLY the retrieved context
+2. Include citations in format: ["Doc", "Section", "p. N"]
+3. Show step-by-step work for calculations
+</instructions>
+```
+
+**Why this structure:**
+- XML-style delimiters clearly separate context from question (OpenAI best practice)
+- Organized by document for easier reference
+- Explicit instructions reinforce grounding rules
+- Handles empty context gracefully with appropriate refusal
+
+---
+
+## 5. Citation Grounding
 
 Every answer includes verifiable citations with precise source tracking:
 
