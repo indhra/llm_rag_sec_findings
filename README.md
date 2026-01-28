@@ -1,6 +1,6 @@
 # SEC 10-K RAG System
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/indhra/sec-10k-rag/blob/main/notebooks/RAG_SEC_10K.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/indhra/llm_rag_sec_findings/blob/main/notebooks/RAG_SEC_10K.ipynb)
 
 > A Retrieval-Augmented Generation pipeline for answering financial and legal questions from Apple 2024 10-K and Tesla 2023 10-K SEC filings.
 
@@ -58,8 +58,8 @@ flowchart LR
 
 ```bash
 # Clone the repo
-git clone https://github.com/indhra/ABB_JAN26.git
-cd ABB_JAN26
+git clone https://github.com/indhra/llm_rag_sec_findings.git
+cd llm_rag_sec_findings
 
 # Install uv (if not already installed)
 curl -LsSf https://astral.sh/uv/install.sh | sh
