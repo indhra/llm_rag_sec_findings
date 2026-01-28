@@ -24,17 +24,17 @@ LLMs have **knowledge cutoff** and **hallucination** issues:
 ```mermaid
 graph TD
     subgraph "Problems with Pure LLMs"
-        P1[❌ Knowledge Cutoff<br/>Training data ends 2023]
-        P2[❌ No Private Data<br/>Can't access your docs]
-        P3[❌ Hallucinations<br/>Makes up plausible-sounding facts]
-        P4[❌ Can't Cite Sources<br/>No verifiability]
+        P1[❌ Knowledge Cutoff - Training data ends 2023]
+        P2[❌ No Private Data - Can't access your docs]
+        P3[❌ Hallucinations - Makes up plausible-sounding facts]
+        P4[❌ Can't Cite Sources - No verifiability]
     end
     
     subgraph "RAG Solution"
-        S1[✅ Fresh Information<br/>Retrieve latest docs]
-        S2[✅ Private Data Access<br/>Search your knowledge base]
-        S3[✅ Grounded Answers<br/>Based on retrieved context]
-        S4[✅ Citations<br/>Point to source documents]
+        S1[✅ Fresh Information - Retrieve latest docs]
+        S2[✅ Private Data Access - Search your knowledge base]
+        S3[✅ Grounded Answers - Based on retrieved context]
+        S4[✅ Citations - Point to source documents]
     end
     
     P1 --> S1
@@ -54,7 +54,7 @@ graph TD
 |----------|------|------|------|-------------|
 | **Pure LLM** | Simple, fast | Outdated, hallucinates | Low | General knowledge |
 | **Fine-tuning** | Specialized knowledge | Expensive, static, needs retraining | High | Fixed domain, <100k docs |
-| **RAG** | ✅ Dynamic updates<br/>✅ Grounded<br/>✅ Cost-effective | Complex system | Medium | **Most use cases** |
+| **RAG** | ✅ Dynamic updates - ✅ Grounded - ✅ Cost-effective | Complex system | Medium | **Most use cases** |
 | **RAG + Fine-tuning** | Best of both | Most complex | Very High | Enterprise, critical apps |
 
 **Your project uses RAG** → Perfect for SEC filings (frequently updated, need citations)
@@ -89,7 +89,7 @@ sequenceDiagram
     S->>U: 12. Answer + Citations
     
     rect rgb(200, 230, 201)
-        Note over S,V: Your project: Hybrid Search<br/>Vector (70%) + BM25 (30%)
+        Note over S,V: Your project: Hybrid Search - Vector (70%) + BM25 (30%)
     end
 ```
 
@@ -98,20 +98,20 @@ sequenceDiagram
 ```mermaid
 graph TB
     subgraph "Indexing Pipeline"
-        D1[📄 Apple 10-K<br/>Tesla 10-K] --> P[PyMuPDF Parser]
-        P --> C[Section-Aware Chunker<br/>512 tokens, 100 overlap]
-        C --> E[BGE Embeddings<br/>384 dims]
-        E --> V[(FAISS Index<br/>491 chunks)]
+        D1[📄 Apple 10-K - Tesla 10-K] --> P[PyMuPDF Parser]
+        P --> C[Section-Aware Chunker - 512 tokens, 100 overlap]
+        C --> E[BGE Embeddings - 384 dims]
+        E --> V[(FAISS Index - 491 chunks)]
         C --> B[(BM25 Index)]
     end
     
     subgraph "Query Pipeline"
-        Q[❓ User Query] --> Q1[Embed Query<br/>BGE model]
-        Q1 --> H[Hybrid Search<br/>70% vector + 30% BM25]
+        Q[❓ User Query] --> Q1[Embed Query - BGE model]
+        Q1 --> H[Hybrid Search - 70% vector + 30% BM25]
         V --> H
         B --> H
-        H --> R[Reranker<br/>Cross-Encoder<br/>Top 15 → Top 5]
-        R --> LLM[Groq Llama 3.1 8B<br/>+ Grounding Prompt]
+        H --> R[Reranker - Cross-Encoder - Top 15 → Top 5]
+        R --> LLM[Groq Llama 3.1 8B - + Grounding Prompt]
         LLM --> A[✅ Answer + Citations]
     end
     
@@ -140,12 +140,12 @@ graph TB
 graph LR
     subgraph "Without Chunking"
         W1[Entire 130-page 10-K] --> W2[One huge embedding]
-        W2 --> W3[❌ Loss of granularity<br/>❌ Exceeds context window<br/>❌ Poor retrieval precision]
+        W2 --> W3[❌ Loss of granularity - ❌ Exceeds context window - ❌ Poor retrieval precision]
     end
     
     subgraph "With Chunking"
-        C1[130-page 10-K] --> C2[491 chunks<br/>512 tokens each]
-        C2 --> C3[✅ Precise retrieval<br/>✅ Manageable size<br/>✅ Better embeddings]
+        C1[130-page 10-K] --> C2[491 chunks - 512 tokens each]
+        C2 --> C3[✅ Precise retrieval - ✅ Manageable size - ✅ Better embeddings]
     end
     
     style W3 fill:#ffcdd2
@@ -157,15 +157,15 @@ graph LR
 ```mermaid
 graph TD
     subgraph "Chunking Strategies"
-        S1[Fixed-Size] --> D1[Split every N tokens<br/>✅ Simple<br/>⚠️ Breaks mid-sentence]
+        S1[Fixed-Size] --> D1[Split every N tokens - ✅ Simple - ⚠️ Breaks mid-sentence]
         
-        S2[Sentence-Based] --> D2[Split on sentences<br/>✅ Semantic boundaries<br/>⚠️ Variable size]
+        S2[Sentence-Based] --> D2[Split on sentences - ✅ Semantic boundaries - ⚠️ Variable size]
         
-        S3[Paragraph-Based] --> D3[Split on paragraphs<br/>✅ Natural units<br/>⚠️ Size variance]
+        S3[Paragraph-Based] --> D3[Split on paragraphs - ✅ Natural units - ⚠️ Size variance]
         
-        S4[Semantic] --> D4[Split on topic changes<br/>✅ Most coherent<br/>❌ Complex, slow]
+        S4[Semantic] --> D4[Split on topic changes - ✅ Most coherent - ❌ Complex, slow]
         
-        S5[Section-Aware ⭐] --> D5[Respect doc structure<br/>✅ Preserves context<br/>✅ Better citations<br/>Your project]
+        S5[Section-Aware ⭐] --> D5[Respect doc structure - ✅ Preserves context - ✅ Better citations - Your project]
     end
     
     style S5 fill:#c8e6c9
@@ -203,12 +203,12 @@ graph TB
         DOC --> S2[Item 7: MD&A]
         DOC --> S3[Financial Statements]
         
-        S1 --> C1[Chunk with metadata:<br/>section='Item 1', page=3]
-        S2 --> C2[Chunk with metadata:<br/>section='Item 7', page=45]
-        S3 --> C3[Chunk with metadata:<br/>section='Statements', page=67]
+        S1 --> C1[Chunk with metadata: - section='Item 1', page=3]
+        S2 --> C2[Chunk with metadata: - section='Item 7', page=45]
+        S3 --> C3[Chunk with metadata: - section='Statements', page=67]
     end
     
-    C1 --> R[Better Retrieval:<br/>Can filter by section]
+    C1 --> R[Better Retrieval: - Can filter by section]
     C2 --> R
     C3 --> R
     
@@ -243,9 +243,9 @@ graph TB
 graph LR
     subgraph "Vector Search"
         Q[Query: 'revenue 2024'] --> E[Embed]
-        E --> V[Vector:<br/>[0.2, -0.5, 0.8, ...]]
-        V --> S[Similarity Search<br/>in FAISS]
-        S --> R[Top chunks by<br/>cosine similarity]
+        E --> V[Vector: - [0.2, -0.5, 0.8, ...]]
+        V --> S[Similarity Search - in FAISS]
+        S --> R[Top chunks by - cosine similarity]
     end
     
     subgraph "Strengths"
@@ -274,9 +274,9 @@ Missed: "Q4 2024" (no semantic overlap) ❌
 ```mermaid
 graph LR
     subgraph "BM25 Search"
-        Q[Query: '2024 Q4'] --> T[Tokenize:<br/>'2024', 'Q4']
+        Q[Query: '2024 Q4'] --> T[Tokenize: - '2024', 'Q4']
         T --> S[BM25 Scoring]
-        S --> R[Top chunks by<br/>keyword match]
+        S --> R[Top chunks by - keyword match]
     end
     
     subgraph "Strengths"
@@ -301,10 +301,10 @@ Missed: "fiscal year ending September 2024" ❌
 
 ```mermaid
 graph TD
-    Q[Query] --> V[Vector Search<br/>Top 20]
-    Q --> B[BM25 Search<br/>Top 20]
+    Q[Query] --> V[Vector Search - Top 20]
+    Q --> B[BM25 Search - Top 20]
     
-    V --> M[Merge + Rerank<br/>70% vector + 30% BM25]
+    V --> M[Merge + Rerank - 70% vector + 30% BM25]
     B --> M
     
     M --> F[Final Top 15]
@@ -350,10 +350,10 @@ Query: "Apple total revenue fiscal year 2024"
 ```mermaid
 graph LR
     subgraph "128k Token Context Window"
-        S[System Prompt:<br/>~500 tokens] --> R[Retrieved Context:<br/>~3500 tokens]
-        R --> Q[User Query:<br/>~50 tokens]
-        Q --> O[Output Budget:<br/>~1000 tokens]
-        O --> B[Buffer:<br/>~123k tokens]
+        S[System Prompt: - ~500 tokens] --> R[Retrieved Context: - ~3500 tokens]
+        R --> Q[User Query: - ~50 tokens]
+        Q --> O[Output Budget: - ~1000 tokens]
+        O --> B[Buffer: - ~123k tokens]
     end
     
     style R fill:#fff9c4
@@ -382,14 +382,14 @@ Total used: ~4100 tokens (3% of 128k window)
 ```mermaid
 graph TD
     subgraph "LLM Attention on Long Context"
-        C1[Chunk 1<br/>Strong attention ✅] 
-        C2[Chunk 2<br/>Medium]
-        C3[Chunk 3<br/>Weak ⚠️]
-        C4[Chunk 4<br/>Weak ⚠️]
-        C5[Chunk 5<br/>Strong attention ✅]
+        C1[Chunk 1 - Strong attention ✅] 
+        C2[Chunk 2 - Medium]
+        C3[Chunk 3 - Weak ⚠️]
+        C4[Chunk 4 - Weak ⚠️]
+        C5[Chunk 5 - Strong attention ✅]
     end
     
-    A[LLMs attend best to<br/>START and END of context]
+    A[LLMs attend best to - START and END of context]
     
     C1 --> A
     C5 --> A
@@ -411,13 +411,13 @@ graph TD
 ```mermaid
 timeline
     title RAG Evolution
-    2020 : Naive RAG<br/>Simple vector search
-    2021 : Hybrid Search<br/>Vector + BM25
-    2022 : Reranking<br/>Cross-encoders
-    2023 : Query Enhancement<br/>HyDE, multi-query
-    2024 : Agentic RAG<br/>Self-reflection, routing
-    2025 : GraphRAG<br/>Knowledge graphs
-    2026 : Multimodal RAG<br/>Text + Images + Tables
+    2020 : Naive RAG - Simple vector search
+    2021 : Hybrid Search - Vector + BM25
+    2022 : Reranking - Cross-encoders
+    2023 : Query Enhancement - HyDE, multi-query
+    2024 : Agentic RAG - Self-reflection, routing
+    2025 : GraphRAG - Knowledge graphs
+    2026 : Multimodal RAG - Text + Images + Tables
 ```
 
 ### Naive RAG
@@ -429,7 +429,7 @@ graph LR
     V --> L[LLM]
     L --> A[Answer]
     
-    P[❌ Issues:<br/>Poor retrieval<br/>No reranking<br/>Basic prompts]
+    P[❌ Issues: - Poor retrieval - No reranking - Basic prompts]
     
     style V fill:#ffcdd2
 ```
@@ -438,12 +438,12 @@ graph LR
 
 ```mermaid
 graph TB
-    Q[Query] --> QE[Query Enhancement<br/>Future: HyDE, multi-query]
-    QE --> H[Hybrid Search<br/>Vector 70% + BM25 30%]
-    H --> R[Reranking<br/>Cross-Encoder<br/>Top 15 → Top 5]
-    R --> C[Context Compression<br/>Future: LLMLingua]
-    C --> L[LLM + Grounding Prompt<br/>Cites sources]
-    L --> V[Verify Citations<br/>Extract metadata]
+    Q[Query] --> QE[Query Enhancement - Future: HyDE, multi-query]
+    QE --> H[Hybrid Search - Vector 70% + BM25 30%]
+    H --> R[Reranking - Cross-Encoder - Top 15 → Top 5]
+    R --> C[Context Compression - Future: LLMLingua]
+    C --> L[LLM + Grounding Prompt - Cites sources]
+    L --> V[Verify Citations - Extract metadata]
     V --> A[Answer + Sources]
     
     style H fill:#c8e6c9

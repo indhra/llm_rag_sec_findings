@@ -26,16 +26,16 @@
 ```mermaid
 graph LR
     subgraph "Traditional RAG"
-        Q1[Query:<br/>'Apple revenue 2024'] --> E1[Embed] --> S1[Search]
+        Q1[Query: - 'Apple revenue 2024'] --> E1[Embed] --> S1[Search]
     end
     
     subgraph "HyDE"
-        Q2[Query:<br/>'Apple revenue 2024'] --> L[LLM generates<br/>hypothetical doc]
-        L --> H[Hypothetical:<br/>'Apple reported $385.6B...']
+        Q2[Query: - 'Apple revenue 2024'] --> L[LLM generates - hypothetical doc]
+        L --> H[Hypothetical: - 'Apple reported $385.6B...']
         H --> E2[Embed] --> S2[Search]
     end
     
-    S1 -.->|May miss| R1[Documents use<br/>formal language]
+    S1 -.->|May miss| R1[Documents use - formal language]
     S2 --> |Better match| R2[Documents]
     
     style S2 fill:#c8e6c9
@@ -70,7 +70,7 @@ hypothetical = "Apple's revenue grew by 2.1% to $385.6 billion in fiscal 2024...
 
 ```mermaid
 graph TD
-    Q[Query:<br/>'Apple revenue 2024'] --> L[LLM generates<br/>variations]
+    Q[Query: - 'Apple revenue 2024'] --> L[LLM generates - variations]
     
     L --> Q1['Apple total sales 2024']
     L --> Q2['Apple net revenue fiscal year 2024']
@@ -80,7 +80,7 @@ graph TD
     Q2 --> S
     Q3 --> S
     
-    S --> M[Merge results<br/>Deduplicate]
+    S --> M[Merge results - Deduplicate]
     M --> R[Top-K final results]
     
     style M fill:#c8e6c9
@@ -114,20 +114,20 @@ def multi_query_search(query, llm, vector_store, n_variants=3):
 
 ```mermaid
 graph TD
-    Q[Complex Query:<br/>'Compare Apple and Tesla revenue growth 2023-2024'] 
+    Q[Complex Query: - 'Compare Apple and Tesla revenue growth 2023-2024'] 
     
     Q --> D[Decompose]
-    D --> Q1[Sub-query 1:<br/>'Apple revenue 2024']
-    D --> Q2[Sub-query 2:<br/>'Apple revenue 2023']
-    D --> Q3[Sub-query 3:<br/>'Tesla revenue 2024']
-    D --> Q4[Sub-query 4:<br/>'Tesla revenue 2023']
+    D --> Q1[Sub-query 1: - 'Apple revenue 2024']
+    D --> Q2[Sub-query 2: - 'Apple revenue 2023']
+    D --> Q3[Sub-query 3: - 'Tesla revenue 2024']
+    D --> Q4[Sub-query 4: - 'Tesla revenue 2023']
     
     Q1 --> R[Retrieve for each]
     Q2 --> R
     Q3 --> R
     Q4 --> R
     
-    R --> A[LLM aggregates<br/>and compares]
+    R --> A[LLM aggregates - and compares]
     
     style A fill:#c8e6c9
 ```
@@ -143,20 +143,20 @@ graph TD
 
 ```mermaid
 graph TB
-    Q[User Query] --> A1{Agent:<br/>What action?}
+    Q[User Query] --> A1{Agent: - What action?}
     
     A1 -->|Need info| R[Retrieve from DB]
     A1 -->|Need calculation| C[Use calculator tool]
     A1 -->|Sufficient info| G[Generate answer]
     A1 -->|Unclear query| CL[Clarify with user]
     
-    R --> A2{Agent:<br/>Enough info?}
+    R --> A2{Agent: - Enough info?}
     C --> A2
     
     A2 -->|No| A1
     A2 -->|Yes| G
     
-    G --> V{Agent:<br/>Verify answer?}
+    G --> V{Agent: - Verify answer?}
     V -->|Unsure| R
     V -->|Confident| OUT[Return answer]
     
@@ -243,8 +243,8 @@ elif llm_response.tool == "calculator":
 ```mermaid
 graph LR
     subgraph "Traditional RAG Limitation"
-        Q[Query:<br/>'How are Apple and Tesla connected?']
-        Q -.-> L[Can't understand<br/>relationships across docs]
+        Q[Query: - 'How are Apple and Tesla connected?']
+        Q -.-> L[Can't understand - relationships across docs]
     end
     
     subgraph "GraphRAG Solution"
@@ -265,17 +265,17 @@ graph LR
 ```mermaid
 graph TB
     subgraph "Document Processing"
-        D[Documents] --> NER[Named Entity<br/>Recognition]
-        NER --> E[Extract:<br/>Entities, Relations]
+        D[Documents] --> NER[Named Entity - Recognition]
+        NER --> E[Extract: - Entities, Relations]
         E --> KG[(Knowledge Graph)]
     end
     
     subgraph "Query Processing"
         Q[Query] --> T[Traverse Graph]
         KG --> T
-        T --> SP[Find relevant<br/>subgraph]
+        T --> SP[Find relevant - subgraph]
         SP --> C[Convert to context]
-        C --> LLM[LLM generates<br/>answer]
+        C --> LLM[LLM generates - answer]
     end
     
     style KG fill:#fff9c4
@@ -307,17 +307,17 @@ graph TB
 
 ```mermaid
 graph TB
-    Q[Query] --> D1{LLM:<br/>Need retrieval?}
+    Q[Query] --> D1{LLM: - Need retrieval?}
     
     D1 -->|Yes| R[Retrieve]
     D1 -->|No, can answer| G1[Generate directly]
     
-    R --> D2{LLM:<br/>Relevant?}
+    R --> D2{LLM: - Relevant?}
     D2 -->|Yes| G2[Generate with context]
     D2 -->|No| R2[Retrieve again]
     
-    G1 --> C1{LLM:<br/>Confident?}
-    G2 --> C2{LLM:<br/>Supported by docs?}
+    G1 --> C1{LLM: - Confident?}
+    G2 --> C2{LLM: - Supported by docs?}
     
     C1 -->|Yes| OUT[Answer]
     C1 -->|No| R
@@ -355,11 +355,11 @@ LLM: [IsUse] Yes, useful answer
 ```mermaid
 graph TB
     Q[Query] --> R[Initial Retrieval]
-    R --> E{Evaluator:<br/>Doc Quality?}
+    R --> E{Evaluator: - Doc Quality?}
     
     E -->|High| G[Generate with docs]
-    E -->|Medium| REF[Refine:<br/>Extract key sentences]
-    E -->|Low| WS[Web Search<br/>for better info]
+    E -->|Medium| REF[Refine: - Extract key sentences]
+    E -->|Low| WS[Web Search - for better info]
     
     REF --> G
     WS --> M[Merge web + docs]
@@ -412,7 +412,7 @@ graph TB
     
     subgraph "Multimodal Processing"
         T --> TE[Text Embeddings]
-        IMG --> VE[Vision Embeddings<br/>CLIP, GPT-4V]
+        IMG --> VE[Vision Embeddings - CLIP, GPT-4V]
         TBL --> SE[Structured Embeddings]
         DGM --> VE
     end
@@ -427,7 +427,7 @@ graph TB
         SE --> R
     end
     
-    R --> MM[Multimodal LLM<br/>GPT-4V, Gemini]
+    R --> MM[Multimodal LLM - GPT-4V, Gemini]
     
     style MM fill:#c8e6c9
 ```
@@ -466,9 +466,9 @@ combined_search(query_embedding, text_index, image_index)
 graph TD
     Q[Query] --> C{Classify Query}
     
-    C -->|Factual| F[Vector Search<br/>top-5]
-    C -->|Comparative| M[Multi-query<br/>+ Aggregation]
-    C -->|Exploratory| E[Broad Search<br/>top-20 + diversify]
+    C -->|Factual| F[Vector Search - top-5]
+    C -->|Comparative| M[Multi-query - + Aggregation]
+    C -->|Exploratory| E[Broad Search - top-20 + diversify]
     
     F --> R[Results]
     M --> R

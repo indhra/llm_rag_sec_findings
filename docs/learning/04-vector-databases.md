@@ -21,15 +21,15 @@
 ```mermaid
 graph TD
     subgraph "Naive Approach: Linear Search"
-        Q[Query Vector] --> C1[Compare with<br/>Vector 1]
-        Q --> C2[Compare with<br/>Vector 2]
-        Q --> CN[Compare with<br/>Vector 1M]
-        C1 --> T[O n complexity<br/>❌ Too slow!]
+        Q[Query Vector] --> C1[Compare with - Vector 1]
+        Q --> C2[Compare with - Vector 2]
+        Q --> CN[Compare with - Vector 1M]
+        C1 --> T[O n complexity - ❌ Too slow!]
     end
     
     subgraph "Vector Database: ANN Search"
-        Q2[Query Vector] --> I[Index Structure<br/>HNSW, IVF, etc.]
-        I --> R[Top-K Results<br/>O log n<br/>✅ Fast!]
+        Q2[Query Vector] --> I[Index Structure - HNSW, IVF, etc.]
+        I --> R[Top-K Results - O log n - ✅ Fast!]
     end
     
     style T fill:#ffcdd2
@@ -83,16 +83,16 @@ graph LR
 ```mermaid
 graph TD
     subgraph "FAISS Index Types"
-        FLAT[IndexFlatIP<br/>Exact search<br/>O n]
-        IVF[IndexIVFFlat<br/>Inverted file<br/>O log n]
-        HNSW[IndexHNSW<br/>Graph-based<br/>O log n]
-        PQ[IndexPQ<br/>Product quantization<br/>Compressed]
+        FLAT[IndexFlatIP - Exact search - O n]
+        IVF[IndexIVFFlat - Inverted file - O log n]
+        HNSW[IndexHNSW - Graph-based - O log n]
+        PQ[IndexPQ - Product quantization - Compressed]
     end
     
-    FLAT --> U1[✅ 100% accurate<br/>❌ Slow on large data<br/>Your project]
-    IVF --> U2[✅ Fast<br/>⚠️ ~95% recall<br/>Good for 1M+ vectors]
-    HNSW --> U3[✅ Fastest queries<br/>✅ 99% recall<br/>❌ High memory]
-    PQ --> U4[✅ Low memory<br/>⚠️ Lower accuracy<br/>Billions of vectors]
+    FLAT --> U1[✅ 100% accurate - ❌ Slow on large data - Your project]
+    IVF --> U2[✅ Fast - ⚠️ ~95% recall - Good for 1M+ vectors]
+    HNSW --> U3[✅ Fastest queries - ✅ 99% recall - ❌ High memory]
+    PQ --> U4[✅ Low memory - ⚠️ Lower accuracy - Billions of vectors]
     
     style FLAT fill:#c8e6c9
 ```
@@ -136,7 +136,7 @@ class VectorStore:
 ```mermaid
 graph TD
     subgraph "IndexFlatIP How It Works"
-        Q[Query:<br/>[0.2, -0.5, 0.8, ...]] --> D1[Dot product with V1]
+        Q[Query: - [0.2, -0.5, 0.8, ...]] --> D1[Dot product with V1]
         Q --> D2[Dot product with V2]
         Q --> D3[Dot product with V491]
         
@@ -144,7 +144,7 @@ graph TD
         D2 --> S2[Score: 0.23]
         D3 --> S3[Score: 0.87]
         
-        S1 --> R[Sort by score<br/>Return top-K]
+        S1 --> R[Sort by score - Return top-K]
         S2 --> R
         S3 --> R
     end
@@ -179,12 +179,12 @@ else:
 ```mermaid
 graph LR
     subgraph "Search Methods"
-        E[Exact Search<br/>100% accurate<br/>O n] --> A1[FAISS IndexFlat]
-        A[ANN Search<br/>95-99% accurate<br/>O log n] --> A2[IVF, HNSW, PQ]
+        E[Exact Search - 100% accurate - O n] --> A1[FAISS IndexFlat]
+        A[ANN Search - 95-99% accurate - O log n] --> A2[IVF, HNSW, PQ]
     end
     
-    A1 --> U1[✅ Small datasets<br/><100k vectors<br/>Your project]
-    A2 --> U2[✅ Large datasets<br/>>1M vectors]
+    A1 --> U1[✅ Small datasets - <100k vectors - Your project]
+    A2 --> U2[✅ Large datasets - >1M vectors]
     
     style A1 fill:#c8e6c9
 ```
@@ -196,13 +196,13 @@ graph LR
 ```mermaid
 graph TD
     subgraph "IVF Index"
-        V[1M Vectors] --> K[K-means Clustering<br/>100 clusters]
-        K --> C1[Cluster 1<br/>10k vectors]
-        K --> C2[Cluster 2<br/>10k vectors]
-        K --> C100[Cluster 100<br/>10k vectors]
+        V[1M Vectors] --> K[K-means Clustering - 100 clusters]
+        K --> C1[Cluster 1 - 10k vectors]
+        K --> C2[Cluster 2 - 10k vectors]
+        K --> C100[Cluster 100 - 10k vectors]
         
-        Q[Query] --> F[Find nearest<br/>5 clusters]
-        F --> S[Search within<br/>50k vectors only]
+        Q[Query] --> F[Find nearest - 5 clusters]
+        F --> S[Search within - 50k vectors only]
         S --> R[Top-K results]
     end
     
@@ -228,9 +228,9 @@ nprobe = 5   # Clusters to search (more = slower but better recall)
 ```mermaid
 graph TD
     subgraph "HNSW Multi-Layer Graph"
-        L0[Layer 0: All vectors<br/>Dense connections]
-        L1[Layer 1: Subset<br/>Medium connections]
-        L2[Layer 2: Subset<br/>Sparse connections]
+        L0[Layer 0: All vectors - Dense connections]
+        L1[Layer 1: Subset - Medium connections]
+        L2[Layer 2: Subset - Sparse connections]
         
         Q[Query] --> L2
         L2 -->|Navigate down| L1
@@ -292,18 +292,18 @@ Query: "Apple revenue 2024"
 ```mermaid
 graph TB
     subgraph "Hybrid Search Pipeline"
-        Q[Query:<br/>'Apple total revenue 2024'] 
+        Q[Query: - 'Apple total revenue 2024'] 
         
-        Q --> V[Vector Search<br/>Semantic similarity]
-        Q --> B[BM25 Search<br/>Keyword matching]
+        Q --> V[Vector Search - Semantic similarity]
+        Q --> B[BM25 Search - Keyword matching]
         
-        V --> R1[Results:<br/>S1: 0.95<br/>S2: 0.87<br/>S5: 0.82]
-        B --> R2[Results:<br/>S1: 15.2<br/>S3: 12.1<br/>S4: 10.8]
+        V --> R1[Results: - S1: 0.95 - S2: 0.87 - S5: 0.82]
+        B --> R2[Results: - S1: 15.2 - S3: 12.1 - S4: 10.8]
         
-        R1 --> N1[Normalize scores<br/>to 0-1 range]
-        R2 --> N2[Normalize scores<br/>to 0-1 range]
+        R1 --> N1[Normalize scores - to 0-1 range]
+        R2 --> N2[Normalize scores - to 0-1 range]
         
-        N1 --> M[Merge:<br/>score = 0.7×vec + 0.3×bm25]
+        N1 --> M[Merge: - score = 0.7×vec + 0.3×bm25]
         N2 --> M
         
         M --> F[Final ranked results]
@@ -367,10 +367,10 @@ class VectorStore:
 ```mermaid
 graph TD
     subgraph "Dataset Size Strategy"
-        S1[<10k vectors] --> A1[FAISS IndexFlat<br/>Exact search<br/>Your project]
-        S2[10k-1M vectors] --> A2[FAISS IVF<br/>Approximate]
-        S3[1M-10M vectors] --> A3[FAISS HNSW<br/>or Pinecone]
-        S4[>10M vectors] --> A4[Distributed DB<br/>Milvus, Weaviate]
+        S1[<10k vectors] --> A1[FAISS IndexFlat - Exact search - Your project]
+        S2[10k-1M vectors] --> A2[FAISS IVF - Approximate]
+        S3[1M-10M vectors] --> A3[FAISS HNSW - or Pinecone]
+        S4[>10M vectors] --> A4[Distributed DB - Milvus, Weaviate]
     end
     
     style A1 fill:#c8e6c9

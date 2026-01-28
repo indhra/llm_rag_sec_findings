@@ -24,9 +24,9 @@
 ```mermaid
 graph TB
     subgraph "Development (Your Current Setup)"
-        D1[Local files<br/>2 PDFs]
-        D2[FAISS in-memory<br/>491 chunks]
-        D3[Groq API<br/>Free tier]
+        D1[Local files - 2 PDFs]
+        D2[FAISS in-memory - 491 chunks]
+        D3[Groq API - Free tier]
         D4[No caching]
         D5[Simple error handling]
         
@@ -44,13 +44,13 @@ graph TB
 ```mermaid
 graph TB
     subgraph "Production Environment"
-        P1[Cloud storage<br/>1000s of PDFs]
-        P2[Vector DB<br/>Pinecone/Weaviate<br/>Millions of chunks]
-        P3[LLM API<br/>Load balancing<br/>Rate limiting]
-        P4[Redis cache<br/>30% hit rate]
-        P5[Circuit breakers<br/>Retry logic<br/>Fallbacks]
-        P6[Monitoring<br/>Metrics<br/>Alerts]
-        P7[A/B testing<br/>Gradual rollout]
+        P1[Cloud storage - 1000s of PDFs]
+        P2[Vector DB - Pinecone/Weaviate - Millions of chunks]
+        P3[LLM API - Load balancing - Rate limiting]
+        P4[Redis cache - 30% hit rate]
+        P5[Circuit breakers - Retry logic - Fallbacks]
+        P6[Monitoring - Metrics - Alerts]
+        P7[A/B testing - Gradual rollout]
         
         P1 --> P2
         P2 --> P3
@@ -84,10 +84,10 @@ graph TB
 
 ```mermaid
 graph LR
-    Q[Query] --> E[Embedding<br/>50ms]
-    E --> H[Hybrid Search<br/>Vector: 5ms<br/>BM25: 10ms]
-    H --> R[Reranking<br/>50ms]
-    R --> L[LLM Generation<br/>3000ms]
+    Q[Query] --> E[Embedding - 50ms]
+    E --> H[Hybrid Search - Vector: 5ms - BM25: 10ms]
+    H --> R[Reranking - 50ms]
+    R --> L[LLM Generation - 3000ms]
     L --> T[Total: 3.2s]
     
     style L fill:#ffcdd2
@@ -194,33 +194,34 @@ llm_time = 2000ms  # 33% faster
 #### Current Setup (Groq Free Tier)
 
 ```python
-# Groq pricing (if paid):
-# - Llama 3.1 8B: $0.05/1M input tokens, $0.08/1M output tokens
+# Groq pricing (2026):
+# - Llama 3.1 8B: $0.02/1M input, $0.05/1M output tokens
+# Note: Pricing varies by provider ($0.02-$0.30/1M depending on host)
 
 cost_per_query = {
     "embedding": 0,  # Local BGE-small model
     "vector_search": 0,  # Local FAISS
     "reranking": 0,  # Local cross-encoder
-    "llm": 0.0008,  # (2500 input + 150 output) * Groq rate
+    "llm": 0.000175,  # (2500*0.02 + 150*0.05)/1M = $0.000175
 }
 
-total_per_1000 = 0.80  # $0.80 per 1000 queries
+total_per_1000 = 0.18  # $0.18 per 1000 queries (Groq pricing)
 ```
 
 #### Production Costs (Pinecone + OpenAI)
 
 ```python
 # Pinecone: $70/mo for 10M vectors
-# OpenAI GPT-4: $0.03/1K input, $0.06/1K output
+# OpenAI GPT-4 Turbo (2026): $10/1M input, $30/1M output
 
 cost_per_query = {
     "vector_db": 0.0007,  # Pinecone query cost
     "embedding": 0.0001,  # OpenAI text-embedding-3-small
     "reranking": 0,       # Still local
-    "llm": 0.09,          # GPT-4 Turbo
+    "llm": 0.0295,        # (2500*10 + 150*30)/1M = $0.0295
 }
 
-total_per_1000 = 91.00  # $91 per 1000 queries!
+total_per_1000 = 29.58  # $29.58 per 1000 queries
 ```
 
 ### Cost Optimization Strategies
@@ -229,14 +230,14 @@ total_per_1000 = 91.00  # $91 per 1000 queries!
 
 ```python
 # Without cache
-cost_per_1000 = 91.00
+cost_per_1000 = 29.58
 
 # With cache (30% hit rate)
 # Cache hits: 0 cost
 # Cache misses: Full cost
-cost_per_1000 = 91.00 * 0.70 = 63.70
+cost_per_1000 = 29.58 * 0.70 = 20.71
 
-# Savings: $27.30 per 1000 queries (30% reduction)
+# Savings: $8.87 per 1000 queries (30% reduction)
 ```
 
 #### 2. Cheaper LLM for Simple Queries
@@ -245,39 +246,41 @@ cost_per_1000 = 91.00 * 0.70 = 63.70
 # Route queries by complexity
 def route_query(query):
     if is_simple(query):  # "What is revenue?"
-        return "llama-3.1-8b"  # $0.0008/query
+        return "llama-3.1-8b"  # $0.000175/query (Groq)
     else:  # "Compare revenue growth trends..."
-        return "gpt-4"         # $0.09/query
+        return "gpt-4-turbo"   # $0.0295/query
 
 # If 60% queries are simple:
-cost_per_1000 = 0.6 * 0.80 + 0.4 * 91.00 = 36.88
+cost_per_1000 = 0.6 * 0.18 + 0.4 * 29.58 = 11.94
 
-# Savings: $54.12 per 1000 queries (59% reduction)
+# Savings: $17.64 per 1000 queries (60% reduction)
 ```
 
 #### 3. Optimize Context Length
 
 ```python
-# Current: 5 chunks, 2500 tokens
-llm_cost = 0.09
+# Current: 5 chunks, 2500 tokens (GPT-4 Turbo)
+llm_cost = 0.0295
 
 # Optimized: 3 chunks, 1500 tokens
-llm_cost = 0.054
+llm_cost = 0.0177  # (1500*10 + 150*30)/1M
 
 # Savings: 40% reduction if precision holds
 ```
 
 #### 4. Use Open-Source Models
 
-| Model | Cost/1M tokens | Accuracy | Speed |
-|-------|----------------|----------|-------|
-| **GPT-4 Turbo** | $30 | ⭐⭐⭐⭐⭐ | Medium |
-| **Claude 3 Sonnet** | $15 | ⭐⭐⭐⭐ | Fast |
-| **Llama 3.1 70B** | $1 | ⭐⭐⭐⭐ | Medium |
-| **Llama 3.1 8B** (your choice) | $0.05 | ⭐⭐⭐ | Fast |
-| **Mixtral 8x7B** | $0.50 | ⭐⭐⭐ | Fast |
+| Model | Cost ($/1M tokens avg)* | Accuracy | Speed |
+|-------|------------------------|----------|-------|
+| **GPT-4 Turbo** | $20 (blend) | ⭐⭐⭐⭐⭐ | Medium |
+| **Claude 3.5 Sonnet** | $18 (blend) | ⭐⭐⭐⭐⭐ | Fast |
+| **Llama 3.1 70B** | $0.80 (blend) | ⭐⭐⭐⭐ | Medium |
+| **Llama 3.1 8B** (your choice) | $0.035 (blend) | ⭐⭐⭐ | Fast |
+| **Mixtral 8x7B** | $0.50 (blend) | ⭐⭐⭐ | Fast |
 
-**Your choice (Llama 3.1 8B) is 600x cheaper than GPT-4!**
+*Blended rate assumes 1:1 input/output ratio. Actual costs vary by provider and usage.
+
+**Your choice (Llama 3.1 8B) is ~570x cheaper than GPT-4 Turbo!**
 
 ---
 
@@ -288,12 +291,12 @@ llm_cost = 0.054
 ```mermaid
 graph TB
     Q[Query] --> C{Cache Check}
-    C -->|Hit| R1[Return cached answer<br/>0ms, $0]
+    C -->|Hit| R1[Return cached answer - 0ms, $0]
     C -->|Miss| E[Embed query]
     E --> S[Search]
     S --> Re[Rerank]
     Re --> L[LLM]
-    L --> R2[Cache result<br/>Return answer]
+    L --> R2[Cache result - Return answer]
     
     style R1 fill:#c8e6c9
     style R2 fill:#fff9c4
@@ -423,13 +426,13 @@ semantic_hit_rate = 0.10 + 0.25 = 0.35  # 35% savings
 ```mermaid
 graph TB
     Q[Query] --> E1{Embedding fails?}
-    E1 -->|Yes| F1[Retry 3x<br/>Fallback to BM25 only]
+    E1 -->|Yes| F1[Retry 3x - Fallback to BM25 only]
     E1 -->|No| S{Search fails?}
-    S -->|Yes| F2[Return cached<br/>or error message]
+    S -->|Yes| F2[Return cached - or error message]
     S -->|No| R{Reranking fails?}
-    R -->|Yes| F3[Skip reranking<br/>Use hybrid scores]
+    R -->|Yes| F3[Skip reranking - Use hybrid scores]
     R -->|No| L{LLM fails?}
-    L -->|Yes| F4[Retry with backoff<br/>Use fallback model]
+    L -->|Yes| F4[Retry with backoff - Use fallback model]
     L -->|No| OK[Success]
     
     style F1 fill:#ffcdd2
@@ -693,11 +696,12 @@ def rag_query(query):
 ### Your Project's Choice: Llama 3.1 8B
 
 **Pros:**
-- ✅ 600x cheaper than GPT-4 ($0.05 vs $30/1M tokens)
+- ✅ ~570x cheaper than GPT-4 Turbo ($0.035 vs $20/1M blended)
 - ✅ Fast inference on Groq (3s total)
 - ✅ Good accuracy (92% on your test set)
 - ✅ Open-source (can self-host)
 - ✅ 128K context window (plenty for RAG)
+- ✅ Pricing varies by provider ($0.02-$0.30/1M) - shop around!
 
 **Cons:**
 - ❌ Lower accuracy than GPT-4/Claude (92% vs 98%)
@@ -834,12 +838,12 @@ def llm_with_retry(query, context):
 
 | Component | Cost (per 1M queries) | Optimization |
 |-----------|----------------------|--------------|
-| **LLM API** | $50-$90,000 | Use cheaper models, cache, reduce context |
+| **LLM API** | $180-$29,580 | Use cheaper models, cache, reduce context |
 | **Vector DB** | $70-$500 | Efficient indexing, query optimization |
 | **Embeddings** | $0-$100 | Local models (free) vs API |
 | **Compute** | $10-$100 | Right-size instances, auto-scaling |
 
-> "LLM is the biggest cost (90%+). I optimized by using Llama 3.1 8B ($0.05/1M tokens) instead of GPT-4 ($30/1M), a 600x reduction. With caching, I can achieve 35% hit rate for another 35% savings."
+> "LLM is the biggest cost (90%+). I optimized by using Llama 3.1 8B ($0.035/1M blended) instead of GPT-4 Turbo ($20/1M blended), a ~570x reduction. With caching, I can achieve 35% hit rate for another 35% savings."
 
 **Q3: How do you handle LLM failures in production?**
 
@@ -882,10 +886,10 @@ def robust_llm_call(query, context):
 
 ✅ **Production ≠ Development:** Need persistence, caching, monitoring, reliability  
 ✅ **Latency bottleneck:** LLM (93% of time) → Use streaming, faster models, caching  
-✅ **Cost bottleneck:** LLM (90% of cost) → Llama 3.1 8B is 600x cheaper than GPT-4  
+✅ **Cost bottleneck:** LLM (90% of cost) → Llama 3.1 8B is ~570x cheaper than GPT-4 Turbo  
 ✅ **Caching is critical:** 30-35% hit rate = 35% cost savings + 0ms latency  
 ✅ **Graceful degradation:** Always have a fallback, never fail silently  
 ✅ **Monitor everything:** Latency, cost, errors, quality → Prometheus + Grafana  
-✅ **Your project:** 92% accuracy at $0.80/1000 queries is production-viable with caching  
+✅ **Your project:** 92% accuracy at $0.18/1000 queries (Groq) is highly production-viable  
 
 **Congratulations!** You've completed the full learning path. Review [Interview Prep](10-interview-prep.md) to solidify your knowledge.

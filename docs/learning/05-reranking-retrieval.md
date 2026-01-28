@@ -23,13 +23,13 @@
 graph TB
     subgraph "Stage 1: Fast Retrieval (Bi-Encoder)"
         Q[Query] --> E1[Embed Query]
-        E1 --> S[Vector Search<br/>491 chunks in <1ms]
-        S --> R1[Top-15 Candidates<br/>High recall, medium precision]
+        E1 --> S[Vector Search - 491 chunks in <1ms]
+        S --> R1[Top-15 Candidates - High recall, medium precision]
     end
     
     subgraph "Stage 2: Precise Reranking (Cross-Encoder)"
-        R1 --> CE[Cross-Encoder<br/>Deep interaction]
-        CE --> R2[Top-5 Results<br/>High precision]
+        R1 --> CE[Cross-Encoder - Deep interaction]
+        CE --> R2[Top-5 Results - High precision]
     end
     
     R2 --> LLM[Feed to LLM]
@@ -45,16 +45,16 @@ graph TB
 graph LR
     subgraph "Bi-Encoder Only"
         B1[Query: 'Apple revenue growth']
-        B2[Vector similarity:<br/>0.82, 0.81, 0.80, 0.79, 0.78...]
+        B2[Vector similarity: - 0.82, 0.81, 0.80, 0.79, 0.78...]
         B1 --> B2
-        B2 --> B3[All scores similar!<br/>Hard to distinguish]
+        B2 --> B3[All scores similar! - Hard to distinguish]
     end
     
     subgraph "With Cross-Encoder Reranking"
         C1[Top-15 candidates]
-        C2[Deep scoring:<br/>0.95, 0.88, 0.72, 0.45, 0.33...]
+        C2[Deep scoring: - 0.95, 0.88, 0.72, 0.45, 0.33...]
         C1 --> C2
-        C2 --> C3[Clear separation!<br/>Pick top-5]
+        C2 --> C3[Clear separation! - Pick top-5]
     end
     
     style B3 fill:#ffcdd2
@@ -72,11 +72,11 @@ graph LR
 ```mermaid
 graph TB
     subgraph "Bi-Encoder (SBERT, BGE)"
-        Q1[Query:<br/>'revenue 2024'] --> E1[Encoder A]
-        D1[Document:<br/>'Apple reported...'] --> E2[Encoder B<br/>Same as A]
+        Q1[Query: - 'revenue 2024'] --> E1[Encoder A]
+        D1[Document: - 'Apple reported...'] --> E2[Encoder B - Same as A]
         
-        E1 --> V1[Vector 1:<br/>[0.2, -0.5, ...]]
-        E2 --> V2[Vector 2:<br/>[0.3, -0.4, ...]]
+        E1 --> V1[Vector 1: - [0.2, -0.5, ...]]
+        E2 --> V2[Vector 2: - [0.3, -0.4, ...]]
         
         V1 --> Sim[Cosine Similarity]
         V2 --> Sim
@@ -84,8 +84,8 @@ graph TB
     end
     
     subgraph "Cross-Encoder (ms-marco, MonoT5)"
-        Q2[Query + Document:<br/>'revenue 2024 [SEP] Apple reported...'] --> E3[Joint Encoder]
-        E3 --> A[Cross-Attention<br/>Deep interaction]
+        Q2[Query + Document: - 'revenue 2024 [SEP] Apple reported...'] --> E3[Joint Encoder]
+        E3 --> A[Cross-Attention - Deep interaction]
         A --> C[Classification Head]
         C --> S2[Relevance: 0.95]
     end
@@ -127,11 +127,11 @@ top_5 = cross_encoder_rerank(query, top_15, k=5)  # 15 → 5 in ~50ms
 
 ```mermaid
 graph TD
-    A1[Approach 1:<br/>Bi-encoder only] --> R1[❌ Fast but<br/>lower precision]
+    A1[Approach 1: - Bi-encoder only] --> R1[❌ Fast but - lower precision]
     
-    A2[Approach 2:<br/>Cross-encoder only] --> R2[❌ Accurate but<br/>too slow 491 docs]
+    A2[Approach 2: - Cross-encoder only] --> R2[❌ Accurate but - too slow 491 docs]
     
-    A3[Approach 3:<br/>Two-stage ✅] --> R3[✅ Best of both:<br/>Fast + Accurate]
+    A3[Approach 3: - Two-stage ✅] --> R3[✅ Best of both: - Fast + Accurate]
     
     style R3 fill:#c8e6c9
 ```
@@ -144,8 +144,8 @@ graph TD
 
 | Model | Size | Speed | Accuracy | Best For |
 |-------|------|-------|----------|----------|
-| **ms-marco-MiniLM-L-12** | 134M | ⚡⚡ Medium | ⭐⭐⭐ Good | General reranking |
-| **ms-marco-MiniLM-L-6** | 67M | ⚡⚡⚡ Fast | ⭐⭐ OK | **Your project** - speed priority |
+| **ms-marco-MiniLM-L-12** | ~134M | ⚡⚡ Medium | ⭐⭐⭐ Good | General reranking |
+| **ms-marco-MiniLM-L-6** | ~67M | ⚡⚡⚡ Fast | ⭐⭐ OK | **Your project** - speed priority |
 | **bge-reranker-large** | 335M | ⚡ Slow | ⭐⭐⭐⭐ Best | High-quality reranking |
 | **MonoT5-base** | 220M | ⚡ Slow | ⭐⭐⭐ Good | T5-based, generative |
 | **RankLLaMA** | 7B | 🐌 Very slow | ⭐⭐⭐⭐ Best | LLM-based, GPU needed |
@@ -166,9 +166,9 @@ reranker = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
 ```
 
 **Training data:** MS MARCO (Microsoft Machine Reading Comprehension)
-- 8.8M passage-query pairs
+- 8.8M+ passage-query pairs
 - Real user queries from Bing search
-- Relevant/irrelevant labels
+- Human-annotated relevance labels
 
 ### How Cross-Encoders Work
 
@@ -184,8 +184,8 @@ graph TB
     
     subgraph "Model Processing"
         SEQ --> BERT[BERT/MiniLM Encoder]
-        BERT --> ATT[Self-Attention<br/>Query tokens attend to doc tokens]
-        ATT --> CLS[CLS Token Representation<br/>Contains interaction info]
+        BERT --> ATT[Self-Attention - Query tokens attend to doc tokens]
+        ATT --> CLS[CLS Token Representation - Contains interaction info]
     end
     
     subgraph "Scoring"
@@ -309,10 +309,10 @@ graph LR
     end
     
     subgraph "After Reranking"
-        A1[Precision@5: 0.85<br/>+42%]
-        A2[Recall@10: 0.65<br/>Same]
-        A3[MRR: 0.78<br/>+34%]
-        A4[NDCG@10: 0.89<br/>+24%]
+        A1[Precision@5: 0.85 - +42%]
+        A2[Recall@10: 0.65 - Same]
+        A3[MRR: 0.78 - +34%]
+        A4[NDCG@10: 0.89 - +24%]
     end
     
     B1 --> A1
@@ -455,9 +455,9 @@ class Reranker:
 ```mermaid
 graph TD
     subgraph "Reranking Strategies"
-        S1[Strategy 1:<br/>Retrieve 10, Rerank to 3] --> T1[Fast 30ms<br/>Precision 0.75]
-        S2[Strategy 2:<br/>Retrieve 15, Rerank to 5] --> T2[Medium 50ms<br/>Precision 0.85 ✅]
-        S3[Strategy 3:<br/>Retrieve 30, Rerank to 10] --> T3[Slow 100ms<br/>Precision 0.90]
+        S1[Strategy 1: - Retrieve 10, Rerank to 3] --> T1[Fast 30ms - Precision 0.75]
+        S2[Strategy 2: - Retrieve 15, Rerank to 5] --> T2[Medium 50ms - Precision 0.85 ✅]
+        S3[Strategy 3: - Retrieve 30, Rerank to 10] --> T3[Slow 100ms - Precision 0.90]
     end
     
     style T2 fill:#c8e6c9

@@ -395,21 +395,21 @@ Parse → Chunk → Embed → Index → Query → Hybrid Search → Rerank → L
 graph TB
     subgraph "Offline: Indexing"
         A[Support Articles] --> P[Parse & Clean]
-        P --> C[Chunk: 256 tokens<br/>Support articles shorter than 10-Ks]
+        P --> C[Chunk: 256 tokens - Support articles shorter than 10-Ks]
         C --> E[Embed: BGE-small]
-        E --> V[(FAISS HNSW<br/>10k articles)]
+        E --> V[(FAISS HNSW - 10k articles)]
     end
     
     subgraph "Online: Query"
         Q[User Query] --> R[Retrieve: Hybrid Search]
         V --> R
         R --> RR[Rerank: Top-10 → Top-3]
-        RR --> LLM[LLM: GPT-3.5-Turbo<br/>Cheap, fast enough]
+        RR --> LLM[LLM: GPT-3.5-Turbo - Cheap, fast enough]
         LLM --> A[Answer + Article Links]
     end
     
     subgraph "Optimizations"
-        Q --> Cache[Redis Cache<br/>30-40% hit rate]
+        Q --> Cache[Redis Cache - 30-40% hit rate]
         Cache --> A
     end
 ```
@@ -460,17 +460,17 @@ graph TB
         P --> F2[Docstrings]
         P --> F3[Code snippets]
         
-        F1 --> E1[Code Embeddings<br/>CodeBERT, GraphCodeBERT]
-        F2 --> E2[Text Embeddings<br/>BGE]
+        F1 --> E1[Code Embeddings - CodeBERT, GraphCodeBERT]
+        F2 --> E2[Text Embeddings - BGE]
         
-        E1 --> V[(Vector DB: Qdrant<br/>+ metadata filtering)]
+        E1 --> V[(Vector DB: Qdrant - + metadata filtering)]
         E2 --> V
     end
     
     subgraph "Retrieval"
-        Q[Natural Language Query] --> H[Hybrid Search:<br/>Vector + keyword + AST]
+        Q[Natural Language Query] --> H[Hybrid Search: - Vector + keyword + AST]
         V --> H
-        H --> RR[Rerank by:<br/>Recency, popularity, repo]
+        H --> RR[Rerank by: - Recency, popularity, repo]
         RR --> R[Return code + context]
     end
 ```
@@ -511,21 +511,21 @@ graph TB
 
 ```mermaid
 graph TD
-    P[Problem: Irrelevant Results] --> S1{Stage 1:<br/>Retrieval}
+    P[Problem: Irrelevant Results] --> S1{Stage 1: - Retrieval}
     
-    S1 -->|Good chunks<br/>retrieved?| S2{Stage 2:<br/>Reranking}
+    S1 -->|Good chunks - retrieved?| S2{Stage 2: - Reranking}
     S1 -->|Bad chunks| D1[Debug Retrieval]
     
-    S2 -->|Good ranking?| S3{Stage 3:<br/>Generation}
+    S2 -->|Good ranking?| S3{Stage 3: - Generation}
     S2 -->|Bad ranking| D2[Debug Reranking]
     
     S3 -->|Answer uses context?| D3[Debug Prompting]
     S3 -->|Ignores context| D4[Debug LLM]
     
-    D1 --> F1[Check:<br/>- Embedding quality<br/>- Chunk size<br/>- Metadata]
-    D2 --> F2[Check:<br/>- Reranker model<br/>- Score thresholds]
-    D3 --> F3[Check:<br/>- Prompt clarity<br/>- Context format]
-    D4 --> F4[Check:<br/>- LLM model<br/>- Temperature]
+    D1 --> F1[Check: - - Embedding quality - - Chunk size - - Metadata]
+    D2 --> F2[Check: - - Reranker model - - Score thresholds]
+    D3 --> F3[Check: - - Prompt clarity - - Context format]
+    D4 --> F4[Check: - - LLM model - - Temperature]
 ```
 
 **Concrete debugging steps:**

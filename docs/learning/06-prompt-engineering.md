@@ -24,17 +24,17 @@
 graph TB
     subgraph "Traditional Prompting"
         U1[User: 'What is Apple revenue?']
-        L1[LLM] --> A1[Answer from<br/>training data<br/>May be outdated/hallucinated]
+        L1[LLM] --> A1[Answer from - training data - May be outdated/hallucinated]
     end
     
     subgraph "RAG Prompting"
         U2[User: 'What is Apple revenue?']
-        R[Retrieval:<br/>Top-5 SEC chunks]
-        P[Prompt Engineering:<br/>System + Context + User]
+        R[Retrieval: - Top-5 SEC chunks]
+        P[Prompt Engineering: - System + Context + User]
         U2 --> R
         R --> P
         P --> L2[LLM]
-        L2 --> A2[✅ Grounded answer<br/>✅ Citations<br/>✅ Accurate]
+        L2 --> A2[✅ Grounded answer - ✅ Citations - ✅ Accurate]
     end
     
     style A1 fill:#ffcdd2
@@ -56,9 +56,9 @@ graph TB
 ```mermaid
 graph TB
     subgraph "Complete Prompt Structure"
-        S[System Prompt:<br/>Role, rules, format]
-        C[Context Chunks:<br/>Retrieved documents]
-        U[User Prompt:<br/>Actual question]
+        S[System Prompt: - Role, rules, format]
+        C[Context Chunks: - Retrieved documents]
+        U[User Prompt: - Actual question]
         
         S --> M[Messages to LLM]
         C --> M
@@ -164,17 +164,17 @@ graph TB
     subgraph "Without Grounding"
         Q1[Query: 'Apple revenue 2024']
         L1[LLM uses training data]
-        L1 --> H[❌ Hallucination:<br/>'Apple revenue is $350B'<br/>Actually it's $385.6B]
+        L1 --> H[❌ Hallucination: - 'Apple revenue is $350B' - Actually it's $385.6B]
     end
     
     subgraph "With Grounding"
         Q2[Query: 'Apple revenue 2024']
         C[Context: 'Apple reported $385.6B']
-        G[Grounding prompt:<br/>'Use ONLY provided context']
+        G[Grounding prompt: - 'Use ONLY provided context']
         Q2 --> C
         C --> G
         G --> L2[LLM]
-        L2 --> A[✅ Accurate:<br/>'Apple revenue is $385.6B'<br/>Source cited]
+        L2 --> A[✅ Accurate: - 'Apple revenue is $385.6B' - Source cited]
     end
     
     style H fill:#ffcdd2
@@ -289,7 +289,7 @@ graph TB
     
     subgraph "Few-Shot (With Examples)"
         F1[System: Answer with citations]
-        F2[Examples:<br/>Q1 → A1 with citation<br/>Q2 → A2 with citation]
+        F2[Examples: - Q1 → A1 with citation - Q2 → A2 with citation]
         F3[User: What is revenue?]
         F1 --> F4[LLM learns pattern]
         F2 --> F4
@@ -391,13 +391,13 @@ Answer:
 graph TB
     subgraph "Standard Prompting"
         Q1[Query: Calculate revenue growth]
-        L1[LLM] --> A1[Direct answer:<br/>'Growth is 15%']
+        L1[LLM] --> A1[Direct answer: - 'Growth is 15%']
     end
     
     subgraph "Chain-of-Thought"
         Q2[Query: Calculate revenue growth]
         COT[Prompt: 'Think step-by-step']
-        L2[LLM] --> R[Reasoning:<br/>1. 2023 revenue: $X<br/>2. 2024 revenue: $Y<br/>3. Growth: Y-X/X = Z%]
+        L2[LLM] --> R[Reasoning: - 1. 2023 revenue: $X - 2. 2024 revenue: $Y - 3. Growth: Y-X/X = Z%]
         R --> A2[Answer: 'Growth is Z%']
     end
     
