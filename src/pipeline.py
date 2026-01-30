@@ -471,7 +471,7 @@ class RAGPipeline:
 
 
 # The main function required by the assignment
-def answer_question(query: str, question_id: Optional[int] = None) -> Dict:
+def answer_question_validation_comparision(query: str, question_id: Optional[int] = None) -> Dict:
     """
     Answers a question using the RAG pipeline.
     
@@ -504,6 +504,42 @@ def answer_question(query: str, question_id: Optional[int] = None) -> Dict:
             _pipeline_instance.index_documents("data/")
     
     return _pipeline_instance.answer_question(query, question_id=question_id)
+
+# The main function required by the assignment
+def answer_question(query: str) -> dict:
+    """
+    Answers a question using the RAG pipeline.
+    
+    Args:
+        query (str): The user question about Apple or Tesla 10-K filings.
+    
+    Returns:
+        dict: {
+            "answer": "Answer text or 'This question cannot be answered based on the provided documents.'",
+            "sources": ["Apple 10-K", "Item 8", "p. 28"]  # Empty list if refused
+        }
+    """
+    global _pipeline_instance
+    
+    # Initialize pipeline if needed
+    if '_pipeline_instance' not in globals() or _pipeline_instance is None:
+        _pipeline_instance = RAGPipeline()
+        
+        # Try to load existing index
+        index_dir = "outputs/index"
+        if Path(index_dir).exists():
+            _pipeline_instance.load_index(index_dir)
+        else:
+            # Index documents
+            _pipeline_instance.index_documents("data/")
+    
+    result = _pipeline_instance.answer_question(query)
+    
+    # Return only answer and sources (remove question_id if present)
+    return {
+        "answer": result["answer"],
+        "sources": result["sources"]
+    }
 
 
 def answer_questions(questions: List[Dict]) -> List[Dict]:
