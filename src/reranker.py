@@ -1,25 +1,10 @@
 """
 Cross-Encoder Reranker for SEC 10-K RAG
-========================================
 
-What we're doing:
-    Taking the initial search results and reranking them using a more 
-    accurate (but slower) cross-encoder model.
+Taking initial search results and reranking them with a cross-encoder model
+that processes query+document together for better accuracy.
 
-Why reranking?
-    - Initial retrieval (bi-encoder) is fast but less accurate
-    - Cross-encoders process query+document together, giving better relevance scores
-    - We rerank top-20 candidates to get top-5 most relevant
-    - This significantly improves precision without sacrificing recall
-
-Cross-encoder vs Bi-encoder:
-    - Bi-encoder: Encodes query and document separately, fast but less accurate
-    - Cross-encoder: Encodes query+document together, slower but more accurate
-
-Model choices:
-    - ms-marco-MiniLM-L-6-v2: Fast, good for development
-    - bge-reranker-v2-m3: State-of-the-art accuracy
-    - jina-reranker-v2: Good alternative
+Bi-encoder (fast) finds candidates, cross-encoder (slower) ranks them precisely.
 
 Author: Indhra
 """
@@ -38,33 +23,32 @@ except ImportError:
 
 
 ERROR_GUIDE = {
-    "No CrossEncoder": "Run: pip install sentence-transformers",
+    "No CrossEncoder": "Install: pip install sentence-transformers",
     "CUDA OOM": "Reduce batch_size or use CPU",
-    "Model not found": "Check model name, internet connection for download",
+    "Model not found": "Check model name and internet connection",
 }
 
 
-# Available reranker models
-# Tested these for SEC document retrieval
+# Available reranker models - tested for SEC documents
 RERANKER_MODELS = {
-    # Fast and good - recommended for development
+    # Fast for dev
     "ms-marco-mini": {
         "name": "cross-encoder/ms-marco-MiniLM-L-6-v2",
-        "description": "Fast reranker, good for dev/testing",
+        "description": "Fast, good for dev/testing",
         "quality": "good",
         "speed": "fast"
     },
-    # Better quality
+    # Tiny but effective
     "ms-marco-base": {
         "name": "cross-encoder/ms-marco-TinyBERT-L-2-v2",
-        "description": "Tiny but effective",
+        "description": "Very fast",
         "quality": "good",
         "speed": "very fast"
     },
-    # Best quality - use for production
+    # Best quality
     "bge-reranker": {
         "name": "BAAI/bge-reranker-v2-m3",
-        "description": "State-of-the-art reranker",
+        "description": "State-of-the-art",
         "quality": "excellent",
         "speed": "medium"
     },
@@ -80,10 +64,9 @@ RERANKER_MODELS = {
 
 class Reranker:
     """
-    Cross-encoder based reranker.
+    Cross-encoder reranker.
     
-    Takes initial search results and reranks them based on query-document
-    relevance scores from a cross-encoder model.
+    Takes initial search results and reranks them based on query-document relevance.
     
     Usage:
         reranker = Reranker(model_key="ms-marco-mini")
@@ -96,8 +79,7 @@ class Reranker:
         device: Optional[str] = None,
         batch_size: int = 16
     ):
-        """
-        Initialize the reranker.
+        """Initialize the reranker."""
         
         Args:
             model_key: Key from RERANKER_MODELS or full model name

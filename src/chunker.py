@@ -1,23 +1,11 @@
 """
 Text Chunker for SEC 10-K Documents
-====================================
 
-What we're doing:
-    Breaking down large documents into smaller, semantically meaningful chunks
-    while preserving metadata (document, section, page) for accurate citations.
+Breaking large documents into smaller chunks while preserving metadata
+(document, section, page) so we can cite sources properly.
 
-Why this approach:
-    - 512-768 tokens is optimal for most embedding models
-    - 100-150 token overlap prevents losing context at chunk boundaries
-    - Section-aware splitting keeps related content together
-    - Metadata preservation enables proper citations like ["Apple 10-K", "Item 8", "p. 28"]
-
-Chunking strategies considered:
-    1. Fixed-size (naive): Simple but breaks mid-sentence
-    2. Recursive (better): Splits on paragraphs, then sentences
-    3. Semantic (best): Groups by meaning - but slower
-    
-We use recursive with section awareness - good balance of quality and speed.
+512-768 tokens works well - not too big, not too small.
+Overlap prevents losing context at chunk boundaries.
 
 Author: Indhra
 """
@@ -27,11 +15,11 @@ from typing import List, Dict, Optional, Tuple
 from dataclasses import dataclass, field
 import tiktoken
 
-# Error patterns I've encountered
+# Error patterns - things I've run into
 ERROR_GUIDE = {
-    "tiktoken encoding not found": "Run: pip install tiktoken",
-    "Empty document": "PDF parsing returned no text. Check pdf_parser.py",
-    "Chunk too small": "Increase chunk_size or decrease overlap",
+    "tiktoken encoding not found": "Install tiktoken",
+    "Empty document": "PDF parsing failed. Check pdf_parser.py",
+    "Chunk too small": "Increase chunk_size or lower overlap",
 }
 
 
@@ -39,22 +27,19 @@ ERROR_GUIDE = {
 class Chunk:
     """
     A chunk of text with metadata for retrieval.
-    
-    This is the atomic unit that gets embedded and stored in the vector DB.
+    This is what gets stored in the vector DB.
     """
     chunk_id: str
     text: str
     document: str      # "Apple 10-K" or "Tesla 10-K"
     section: str       # "Item 7", "Note 9", etc.
     page_start: int    # Starting page number
-    page_end: int      # Ending page (same as start for single-page chunks)
+    page_end: int      # Ending page (same as start usually)
     source_file: str   # Original PDF filename
-    token_count: int   # Number of tokens (for context window management)
+    token_count: int   # For context window management
     
     def get_source_citation(self) -> List[str]:
-        """
-        Returns citation in the format required: ["Apple 10-K", "Item 8", "p. 28"]
-        """
+        """Returns citation format: ["Apple 10-K", "Item 8", "p. 28"]"""
         page_str = f"p. {self.page_start}" if self.page_start == self.page_end else f"pp. {self.page_start}-{self.page_end}"
         return [self.document, self.section, page_str]
     

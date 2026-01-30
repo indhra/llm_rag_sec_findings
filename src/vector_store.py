@@ -1,21 +1,9 @@
 """
 Vector Store with Hybrid Search for SEC 10-K RAG
-=================================================
 
-What we're doing:
-    Building a retrieval system that combines:
-    1. Vector search (FAISS) - finds semantically similar content
-    2. Keyword search (BM25) - finds exact matches
-    3. Fusion - combines both for best results
-
-Why hybrid search?
-    - Vector search alone misses exact terms like "$391,036 million"
-    - Keyword search alone misses semantic matches like "revenue" ↔ "net sales"
-    - Hybrid gives us the best of both worlds (~35% better recall)
-
-Fusion methods:
-    - Reciprocal Rank Fusion (RRF): Simple and effective
-    - Weighted sum: Tune α between vector and keyword scores
+Combining vector search (FAISS) with keyword search (BM25).
+Vector search finds semantic matches, BM25 finds exact terms.
+Together they're much better than either alone.
 
 Author: Indhra
 """
@@ -45,9 +33,9 @@ except ImportError:
 
 
 ERROR_GUIDE = {
-    "faiss not installed": "Run: pip install faiss-cpu",
-    "rank_bm25 not installed": "Run: pip install rank-bm25",
-    "Index not built": "Call build_index() before searching",
+    "faiss not installed": "Install: pip install faiss-cpu",
+    "rank_bm25 not installed": "Install: pip install rank-bm25",
+    "Index not built": "Call build_index() first",
     "Dimension mismatch": "Query embedding dimension doesn't match index",
 }
 
@@ -55,7 +43,7 @@ ERROR_GUIDE = {
 @dataclass
 class SearchResult:
     """
-    A single search result with metadata.
+    A search result with metadata.
     """
     chunk_id: str
     text: str
@@ -66,12 +54,12 @@ class SearchResult:
     page_end: int
     source_file: str
     
-    # For hybrid search, we track individual scores
+    # For hybrid search, track individual scores
     vector_score: Optional[float] = None
     bm25_score: Optional[float] = None
     
     def get_citation(self) -> List[str]:
-        """Return citation in format: ["Apple 10-K", "Item 8", "p. 28"]"""
+        """Citation format: ["Apple 10-K", "Item 8", "p. 28"]"""
         page_str = f"p. {self.page_start}" if self.page_start == self.page_end else f"pp. {self.page_start}-{self.page_end}"
         return [self.document, self.section, page_str]
     

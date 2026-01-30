@@ -2,22 +2,22 @@
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/indhra/llm_rag_sec_findings/blob/main/notebooks/RAG_SEC_10K.ipynb)
 
-> A Retrieval-Augmented Generation pipeline for answering financial and legal questions from Apple 2024 10-K and Tesla 2023 10-K SEC filings.
+> A RAG pipeline for answering financial and legal questions from Apple 2024 and Tesla 2023 SEC 10-K filings.
 
 **Author:** Indhra  
 **Date:** January 2026
 
-📄 **[Design Report](design_report.md)** - Detailed explanations of all design decisions
+📄 **[Design Report](design_report.md)** - Design decisions and architecture details
 
 ---
 
 ## 🎯 Objective
 
 Build a RAG system that:
-- Parses Apple's 2024 10-K and Tesla's 2023 10-K filings
-- Answers complex financial/legal questions with accurate citations
+- Parses Apple's 2024 10-K and Tesla's 2023 10-K
+- Answers complex financial/legal questions with proper citations
 - Handles out-of-scope questions gracefully
-- Uses only open-source/open-access LLMs (no GPT-4/Claude)
+- Uses only open-source/open-access LLMs
 
 ---
 
@@ -46,9 +46,9 @@ flowchart LR
 ```
 
 **Key Design Choices:**
-- **Hybrid Search**: Combines semantic (vector) + keyword (BM25) → 35% better recall
-- **Cross-Encoder Reranking**: Improves precision on retrieved chunks  
-- **Section-Aware Chunking**: Preserves document structure for accurate citations
+- **Hybrid Search**: Vector + keyword search → better recall
+- **Cross-Encoder Reranking**: Improves result precision  
+- **Section-Aware Chunking**: Keeps document structure for citations
 
 ---
 

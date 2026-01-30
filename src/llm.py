@@ -1,28 +1,8 @@
 """
 LLM Integration for SEC 10-K RAG System
-========================================
 
-What we're doing:
-    Connecting to open-source/open-access LLMs for answer generation.
-    We avoid GPT-4/Claude per the assignment requirements.
-
-Why this approach:
-    - Multiple provider support for flexibility (Groq, HuggingFace, local)
-    - Groq is recommended: free tier, fast inference, good models (Llama, Mixtral)
-    - HuggingFace Inference API: free tier, huge model selection
-    - Local Ollama: no internet, full privacy, but needs setup
-
-Provider recommendations:
-    1. Groq (recommended): Free, fast, Llama 3, Mixtral
-    2. HuggingFace: Free tier, many models
-    3. Together AI: $25 free credit, good models
-    4. Local Ollama: Offline, private, but slower
-
-Prompt design is critical:
-    - Use ONLY retrieved context
-    - Cite sources properly
-    - Handle out-of-scope questions
-    - Refuse speculation/forecasts
+Connecting to open-source LLMs for answer generation.
+Using Groq for speed and reliability (or HuggingFace/local Ollama as alternatives).
 
 Author: Indhra
 """
@@ -54,50 +34,33 @@ except ImportError:
 
 
 ERROR_GUIDE = {
-    "Invalid API key": "Check your API key in .env file",
-    "Rate limit exceeded": "Wait a minute and retry, or upgrade plan",
+    "Invalid API key": "Check .env file",
+    "Rate limit exceeded": "Wait or upgrade plan",
     "Model not found": "Check model name spelling",
-    "Connection error": "Check internet connection",
-    "Context too long": "Reduce number of retrieved chunks",
+    "Connection error": "Check internet",
+    "Context too long": "Reduce retrieved chunks",
 }
 
 
 # ============================================================================
-# SYSTEM PROMPT - CRITICAL FOR RAG ACCURACY
-# ============================================================================
-# Research-backed prompt engineering from:
-# - Anthropic's "Building Effective Agents" guidelines
-# - OpenAI's prompt engineering best practices  
-# - Chain-of-Thought (CoT) prompting for financial analysis (CFI)
-# - Azure AI hallucination mitigation techniques
-# - ScopeQA research on out-of-scope question handling
-# - FinanceBench RAG accuracy patterns
+# SYSTEM PROMPT
 # ============================================================================
 
-SYSTEM_PROMPT = """# IDENTITY & ROLE
-You are a Senior Financial Analyst AI assistant with expertise in SEC regulatory filings. You specialize in analyzing Form 10-K annual reports for Apple Inc. (FY2024) and Tesla Inc. (FY2023).
+SYSTEM_PROMPT = """# ROLE
+You are a Senior Financial Analyst AI assistant with expertise in SEC Form 10-K filings.
+You analyze Apple Inc. 10-K (FY2024) and Tesla Inc. 10-K (FY2023) ONLY.
 
-Your knowledge is STRICTLY LIMITED to the provided context chunks from these official SEC filings. You have NO access to external information, real-time data, or knowledge beyond these documents.
+Your knowledge is STRICTLY LIMITED to the provided context chunks. No external information, real-time data, or knowledge beyond these documents.
 
 ---
 
-# DOCUMENT AWARENESS
-You are analyzing the following SEC 10-K filings:
-- **Apple Inc. 10-K** (Fiscal Year ended September 28, 2024) - Filed November 1, 2024
-- **Tesla Inc. 10-K** (Fiscal Year ended December 31, 2023) - Filed January 2024
-
-Key sections in 10-K filings:
-- Part I: Item 1 (Business), Item 1A (Risk Factors), Item 1B (Unresolved Staff Comments)
-- Part II: Item 5 (Market), Item 6 (Reserved), Item 7 (MD&A), Item 8 (Financial Statements), Item 9 (Controls)
-- Part III: Item 10-14 (Directors, Compensation, Ownership)
-- Part IV: Item 15 (Exhibits), Signatures
+# DOCUMENTS
+- Apple Inc. 10-K (Fiscal Year ended September 28, 2024) - Filed November 1, 2024
+- Tesla Inc. 10-K (Fiscal Year ended December 31, 2023) - Filed January 2024
 
 ---
 
-# GROUNDING RULES (CRITICAL - PREVENTS HALLUCINATION)
-
-## Rule 1: CONTEXT-ONLY Responses
-- Base your answer EXCLUSIVELY on the provided context chunks
+# GROUNDING RULES (PREVENT HALLUCINATION)
 - NEVER use knowledge from your training data
 - NEVER infer, assume, or extrapolate beyond what is explicitly stated
 - If information appears partially, state only what is explicitly provided

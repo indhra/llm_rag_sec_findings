@@ -8,7 +8,8 @@
 
 ## 1. System Overview
 
-This RAG (Retrieval-Augmented Generation) system answers complex financial and legal questions from SEC 10-K filings (Apple 2024, Tesla 2023) using only open-source/open-access LLMs.
+Building a RAG system to answer questions from SEC 10-K filings (Apple 2024, Tesla 2023).
+Using open-source LLMs only.
 
 ### Architecture
 
@@ -68,15 +69,15 @@ graph TD
 ```
 
 **Why this approach:**
-- Benchmarks show PyMuPDF achieves best F1 score on financial documents (arxiv:2312.17583)
-- Fast extraction (~2 seconds for 130-page Tesla 10-K)
-- Preserves page numbers for accurate citations
-- Handles complex table layouts better than alternatives
+- PyMuPDF has good F1 on financial documents
+- Fast (~2 seconds for 130-page PDF)
+- Preserves page numbers for citations
+- Handles tables well
 
-**Alternatives considered:**
-- `pdfplumber`: Better tables but 3x slower
-- `unstructured`: Overkill for clean SEC filings
-- `pypdf`: Misses some formatting
+**Alternatives:**
+- pdfplumber: Better tables but 3x slower
+- unstructured: Too much overhead
+- pypdf: Misses formatting
 
 ### 2.2 Chunking Strategy: Section-Aware 512 Tokens
 
@@ -112,10 +113,10 @@ graph LR
 ```
 
 **Why this approach:**
-- **512 tokens** balances context (enough for financial reasoning) vs. precision (not too diluted)
-- **Section detection** (Item 1, Item 7, Note X) ensures chunks don't cross logical boundaries
-- **100-token overlap** prevents losing context at boundaries
-- **Metadata** (document, section, page) enables grounded citations
+- 512 tokens is a good balance - enough context, not too diluted
+- Section detection (Item 1, Item 7) keeps chunks logically together
+- 100-token overlap prevents losing context at boundaries
+- Metadata (document, section, page) for proper citations
 
 ### 2.3 Hybrid Search: Vector (70%) + BM25 (30%)
 
@@ -141,32 +142,23 @@ flowchart TB
 ```
 
 **Why this approach:**
-- Vector search alone misses exact numbers ("$391,036 million" vs "$391 billion")
-- BM25 alone misses semantic matches ("revenue" ↔ "net sales")
-- Reciprocal Rank Fusion (RRF) combines both with k=60 constant
-- 70/30 weighting because financial questions are more semantic than keyword
-
-**Evidence:**
-- Hybrid approach achieved 35% better recall in testing
-- Captures both conceptual understanding and precise numerical queries
+- Vector search misses exact numbers, BM25 misses semantic meaning
+- Hybrid gets both
+- Tested - 35% better recall
 
 ### 2.4 Embedding Model: BGE-small-en-v1.5
 
-**Why this approach:**
-- MTEB leaderboard top performer for retrieval (2024)
-- 384 dimensions = fast indexing + small memory
-- Specifically trained for retrieval (vs. general-purpose models)
-- Works on CPU/MPS, no GPU required
-
-**For production:** BGE-large-en-v1.5 (1024 dims) would improve accuracy ~3%
+- Top performer on MTEB leaderboard
+- 384 dimensions - fast and memory efficient
+- Trained specifically for retrieval
+- Works on CPU/MPS
 
 ### 2.5 Reranker: Cross-Encoder MS-MARCO MiniLM
 
-**Why this approach:**
-- Cross-encoders consider query-document interaction (better than bi-encoder)
-- MS-MARCO trained on real search relevance judgments
-- MiniLM variant is fast enough for real-time use
-- Reranking top-10 → top-5 removes false positives
+- Cross-encoders understand query-document interaction
+- Trained on real search relevance data
+- Fast enough for production
+- Reranks top-10 → top-5 to remove false positives
 
 ### 2.6 LLM: Groq (Llama 3.1 8B)
 
@@ -221,54 +213,30 @@ Response: "This question requires data not present in the provided documents..."
 
 ---
 
-## 4. System Prompt Engineering (Research-Backed)
+## 4. System Prompt Engineering
 
-The system prompt is the most critical component for RAG accuracy. Our prompt was designed using research-backed principles from:
-
-- **Anthropic's "Building Effective Agents"** - Structured prompting patterns
-- **OpenAI's Prompt Engineering Guide** - Message formatting with XML/Markdown
-- **Azure AI Hallucination Mitigation** - Grounding techniques
-- **Chain-of-Thought (CoT) for Financial Analysis** (CFI) - Step-by-step reasoning
-- **ScopeQA Research** (arxiv:2410.14567) - Out-of-scope question handling
-- **FinanceBench RAG Patterns** - Domain-specific financial accuracy
+The system prompt is what keeps the LLM grounded and accurate. Designed based on best practices from Anthropic, OpenAI, and research papers on RAG accuracy.
 
 ### 4.1 Key Prompt Components
 
-```mermaid
-graph TB
-    subgraph "System Prompt Structure"
-        A[🎭 IDENTITY & ROLE<br/>Senior Financial Analyst AI] --> B[📚 DOCUMENT AWARENESS<br/>Apple 10-K FY2024<br/>Tesla 10-K FY2023]
-        B --> C[🔒 GROUNDING RULES<br/>5 Critical Rules]
-        C --> D[🚫 REFUSAL PROTOCOL<br/>5 Out-of-Scope Categories]
-        D --> E[📝 RESPONSE STRUCTURE<br/>Chain-of-Thought Format]
-        E --> F[✅ QUALITY STANDARDS<br/>& Examples]
-    end
-    
-    style A fill:#e3f2fd
-    style C fill:#ffcdd2
-    style D fill:#fff9c4
-    style F fill:#c8e6c9
-```
+Five main parts:
+1. Define the role (Senior Financial Analyst)
+2. Describe available documents
+3. Set grounding rules (prevent hallucination)
+4. Refusal protocol for out-of-scope questions
+5. Response format with examples
 
-### 4.2 Grounding Rules (Prevents Hallucination)
+### 4.2 Grounding Rules
 
-| Rule | Purpose | Implementation |
-|------|---------|----------------|
-| **CONTEXT-ONLY** | Prevent training data leakage | "NEVER use knowledge from your training data" |
-| **Numerical Precision** | Exact number quoting | "$391,036 million" not "$391 billion" |
-| **Complete Enumeration** | No list truncation | "Include ALL items mentioned" |
-| **Explicit Citation** | Verifiable sources | Format: ["Doc", "Section", "p. N"] |
-| **Yes/No Verification** | Direct quotes for confirmation | "Quote the exact text" |
+| Rule | What it does |
+|------|-------------|
+| CONTEXT-ONLY | No training data leakage |
+| Numerical Precision | "$391,036 million" not "$391 billion" |
+| Complete Enumeration | Include ALL items |
+| Explicit Citation | Format: ["Doc", "Section", "p. N"] |
+| Verify with Quotes | Direct text for yes/no questions |
 
-### 4.3 Refusal Protocol (5 Categories)
-
-| Category | Trigger Patterns | Response Strategy |
-|----------|-----------------|-------------------|
-| **A: Future/Predictive** | "will", "forecast", "2025" | "I can only provide information from SEC filings..." |
-| **B: Investment Advice** | "should I buy", "recommend" | "I cannot provide investment advice..." |
-| **C: External Data** | "compare to Google", other companies | "This requires data not in provided documents..." |
-| **D: Not in Context** | Answer not in retrieved chunks | "This specific information is not found..." |
-| **E: Post-Filing Date** | Events after filing date | "This asks about information after filing date..." |
+### 4.3 Out-of-Scope Questions
 
 ### 4.4 User Prompt Structure
 
@@ -341,16 +309,16 @@ sequenceDiagram
 ```
 
 **How it works:**
-1. Each chunk carries metadata: `{document, section, page_start, page_end}`
-2. LLM is prompted to cite sources in specific format
-3. `parse_answer_and_sources()` extracts citations from response
-4. Citations are validated against retrieved chunks
+1. Each chunk carries: document, section, page numbers
+2. LLM is prompted to cite in specific format
+3. Parse the citations from response
+4. Validate citations against retrieved chunks
 
 ---
 
 ## 5. Evaluation Results
 
-### 5.1 Full 13-Question Evaluation
+Tested on 13 questions spanning financial data, out-of-scope detection, and edge cases.
 
 | Q# | Question (Summary) | Expected Answer | System Answer | Status |
 |----|-------------------|-----------------|---------------|--------|
@@ -370,15 +338,15 @@ sequenceDiagram
 
 **Score: 12/13 correct (92.3% accuracy)**
 
-### 5.2 Performance Metrics
+### Performance Metrics
 
 | Metric | Value |
 |--------|-------|
-| Indexing time | ~30 seconds (491 chunks) |
+| Indexing time | ~30 seconds |
 | Query latency | ~2-3 seconds |
-| In-scope accuracy | 9/10 questions correct |
+| In-scope accuracy | 9/10 correct |
 | Out-of-scope detection | 3/3 refused properly |
-| Total accuracy | 12/13 (92.3%) |
+| Total accuracy | 92.3% |
 
 ### 5.3 System Configuration
 

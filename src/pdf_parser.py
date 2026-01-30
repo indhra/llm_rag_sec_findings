@@ -1,21 +1,10 @@
 """
 PDF Parser for SEC 10-K Documents
-=================================
 
-What we're doing:
-    Extracting clean text from Apple and Tesla 10-K PDF filings,
-    while preserving crucial metadata like page numbers and section headers.
+Extracting text from Apple and Tesla 10-K filings, keeping page numbers
+and section headers for proper citations.
 
-Why this approach:
-    - PyMuPDF (fitz) has the best F1 score for financial documents (per arxiv benchmarks)
-    - It's 10x faster than vision-based approaches and doesn't need GPU
-    - We detect SEC section headers (Item 1, Item 7, etc.) for better citations
-    
-SEC 10-K Structure (for reference):
-    - Part I: Business, Risk Factors, Properties, Legal Proceedings
-    - Part II: Market Info, MD&A, Financial Statements, Controls
-    - Part III: Directors, Compensation, Related Transactions
-    - Part IV: Exhibits, Signatures
+Using PyMuPDF (fitz) - it's fast and handles financial docs well.
 
 Author: Indhra
 """
@@ -27,26 +16,18 @@ from typing import List, Dict, Optional
 from dataclasses import dataclass
 
 
-# Common error patterns and how to fix them
-# I keep running into these issues, so documenting for future reference
+# Error patterns I've hit - quick fixes
 ERROR_GUIDE = {
-    "FileNotFoundError": "Check if the PDF path is correct. Use absolute paths.",
-    "fitz.EmptyFileError": "PDF file might be corrupted. Try re-downloading.",
-    "RuntimeError: cannot open": "File might be locked by another process. Close PDF viewer.",
-    "UnicodeDecodeError": "PDF has encoding issues. Try with different extraction mode.",
+    "FileNotFoundError": "Wrong path? Use absolute.",
+    "fitz.EmptyFileError": "Corrupt PDF. Re-download.",
+    "RuntimeError: cannot open": "PDF locked. Close viewer.",
+    "UnicodeDecodeError": "Encoding issue. Try different mode.",
 }
 
 
 @dataclass
 class PageContent:
-    """
-    Represents extracted content from a single PDF page.
-    
-    Keeping it simple - just the essentials for RAG:
-    - page_num: 1-indexed (matches what humans see in the PDF)
-    - text: raw extracted text
-    - sections: detected SEC section headers on this page
-    """
+    """A page from the PDF with text and detected sections."""
     page_num: int
     text: str
     sections: List[str]
@@ -58,23 +39,18 @@ class PageContent:
 
 @dataclass
 class Document:
-    """
-    Represents a parsed PDF document with all its pages.
-    """
+    """A parsed PDF with its pages."""
     name: str  # "Apple 10-K" or "Tesla 10-K"
     source_file: str
     pages: List[PageContent]
     total_pages: int
     
     def get_full_text(self) -> str:
-        """Get all text concatenated. Useful for debugging."""
+        """All text concatenated - for debugging."""
         return "\n\n".join(p.text for p in self.pages)
     
     def get_text_with_metadata(self) -> List[Dict]:
-        """
-        Returns list of dicts with text and metadata.
-        This is what the chunker will consume.
-        """
+        """Returns text + metadata dicts for the chunker."""
         results = []
         for page in self.pages:
             results.append({

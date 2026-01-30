@@ -1,22 +1,9 @@
 """
 Embedding Generator for SEC 10-K RAG System
-============================================
 
-What we're doing:
-    Converting text chunks into dense vector representations (embeddings)
-    that capture semantic meaning for similarity search.
-
-Why this approach:
-    - sentence-transformers is the standard library for embedding models
-    - We support multiple models for flexibility:
-        * MiniLM (fast, good for local dev)
-        * BGE (best quality, recommended for production)
-    - Embeddings are normalized for cosine similarity
-
-Model choices explained:
-    - all-MiniLM-L6-v2: 384 dims, fast, good baseline
-    - BAAI/bge-large-en-v1.5: 1024 dims, top MTEB scores
-    - BAAI/bge-m3: multilingual, but slower
+Converting text chunks into vectors so we can do semantic search.
+Using sentence-transformers library with different models to balance
+speed vs. quality depending on what we need.
 
 Author: Indhra
 """
@@ -39,33 +26,32 @@ except ImportError:
 
 # Error guide for common issues
 ERROR_GUIDE = {
-    "No module named 'sentence_transformers'": "Run: pip install sentence-transformers",
-    "CUDA out of memory": "Reduce batch_size or use CPU (device='cpu')",
-    "Connection error": "Check internet connection for model download",
-    "Model not found": "Check model name spelling, or try a different model",
+    "No module named 'sentence_transformers'": "Install: pip install sentence-transformers",
+    "CUDA out of memory": "Reduce batch_size or use CPU",
+    "Connection error": "Check internet for model download",
+    "Model not found": "Check model name or try different one",
 }
 
 
-# Available embedding models with their properties
-# I tested these and noted their tradeoffs
+# Available models - tested these, noting the tradeoffs
 EMBEDDING_MODELS = {
-    # Fast and light - good for development
+    # Fast and light
     "minilm": {
         "name": "sentence-transformers/all-MiniLM-L6-v2",
         "dimensions": 384,
-        "description": "Fast, lightweight model. Good for dev/testing.",
+        "description": "Fast, lightweight. Good for dev.",
         "quality": "good",
         "speed": "fast"
     },
-    # Best quality - use for production
+    # Best quality
     "bge-large": {
         "name": "BAAI/bge-large-en-v1.5",
         "dimensions": 1024,
-        "description": "Top quality embeddings. Best for production.",
+        "description": "Top quality embeddings.",
         "quality": "excellent",
         "speed": "medium"
     },
-    # Good balance of quality and speed
+    # Sweet spot
     "bge-base": {
         "name": "BAAI/bge-base-en-v1.5",
         "dimensions": 768,
@@ -73,11 +59,11 @@ EMBEDDING_MODELS = {
         "quality": "very good",
         "speed": "medium"
     },
-    # Small and fast
+    # Small but solid
     "bge-small": {
         "name": "BAAI/bge-small-en-v1.5",
         "dimensions": 384,
-        "description": "Small but good quality. Fast inference.",
+        "description": "Small but good quality.",
         "quality": "good",
         "speed": "fast"
     }
@@ -86,10 +72,7 @@ EMBEDDING_MODELS = {
 
 @dataclass
 class EmbeddingResult:
-    """
-    Result of embedding generation.
-    Keeps track of the text and its embedding together.
-    """
+    """Result of embedding generation - text and its vector."""
     text: str
     embedding: np.ndarray
     chunk_id: Optional[str] = None

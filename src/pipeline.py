@@ -1,19 +1,11 @@
 """
 Main RAG Pipeline for SEC 10-K Question Answering
-==================================================
 
-What we're doing:
-    This is the main orchestrator that ties all components together:
-    1. Parse PDFs → 2. Chunk text → 3. Embed chunks → 4. Build index
-    5. Search (hybrid) → 6. Rerank → 7. Generate answer with LLM
+Orchestrator that ties all components together:
+1. Parse PDFs → 2. Chunk text → 3. Embed chunks → 4. Build index
+5. Search (hybrid) → 6. Rerank → 7. Generate answer with LLM
 
-Why this architecture:
-    - Modular design: Each component can be tested/replaced independently
-    - Hybrid search: Better recall than vector-only
-    - Reranking: Better precision for final results
-    - Grounded answers: LLM only uses retrieved context
-
-The main interface is answer_question(query) as required by the assignment.
+Each component can be tested/swapped independently.
 
 Author: Indhra
 """
@@ -37,18 +29,17 @@ from .llm import get_llm, parse_answer_and_sources, LLMResponse
 
 # Error patterns and solutions
 ERROR_GUIDE = {
-    "No documents found": "Check that PDFs exist in data/ folder",
+    "No documents found": "Check PDFs in data/ folder",
     "Empty index": "Run index_documents() first",
     "LLM failed": "Check API key or try different provider",
-    "No results": "Query might be too specific, try rephrasing",
+    "No results": "Query too specific? Try rephrasing",
 }
 
 
 @dataclass
 class AnswerResult:
     """
-    The final answer with sources.
-    This matches the required output format.
+    Final answer with sources.
     """
     answer: str
     sources: List[str]  # ["Apple 10-K", "Item 8", "p. 28"] or []
@@ -66,13 +57,8 @@ class RAGPipeline:
     Complete RAG Pipeline for SEC 10-K QA.
     
     Usage:
-        # Initialize
         pipeline = RAGPipeline()
-        
-        # Index documents (one-time)
         pipeline.index_documents("data/")
-        
-        # Answer questions
         result = pipeline.answer_question("What was Apple's revenue?")
     """
     
