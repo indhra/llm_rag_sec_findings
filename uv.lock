@@ -1009,6 +1009,69 @@ wheels = [
 ]
 
 [[package]]
+name = "llm-rag-sec-findings"
+version = "0.1.0"
+source = { virtual = "." }
+dependencies = [
+    { name = "faiss-cpu" },
+    { name = "groq" },
+    { name = "huggingface-hub" },
+    { name = "matplotlib" },
+    { name = "nltk" },
+    { name = "numpy" },
+    { name = "openai" },
+    { name = "pandas" },
+    { name = "pdfplumber" },
+    { name = "pymupdf" },
+    { name = "python-dotenv" },
+    { name = "python-json-logger" },
+    { name = "rank-bm25" },
+    { name = "scikit-learn" },
+    { name = "sentence-transformers" },
+    { name = "tenacity" },
+    { name = "tiktoken" },
+    { name = "torch" },
+    { name = "tqdm" },
+    { name = "transformers" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "ipykernel" },
+    { name = "jupyter" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "faiss-cpu", specifier = "==1.13.2" },
+    { name = "groq", specifier = "==1.0.0" },
+    { name = "huggingface-hub", specifier = "==1.3.4" },
+    { name = "matplotlib", specifier = "==3.10.8" },
+    { name = "nltk", specifier = "==3.9.2" },
+    { name = "numpy", specifier = "==2.4.1" },
+    { name = "openai", specifier = "==2.15.0" },
+    { name = "pandas", specifier = "==3.0.0" },
+    { name = "pdfplumber", specifier = "==0.11.9" },
+    { name = "pymupdf", specifier = "==1.26.7" },
+    { name = "python-dotenv", specifier = "==1.2.1" },
+    { name = "python-json-logger", specifier = "==4.0.0" },
+    { name = "rank-bm25", specifier = "==0.2.2" },
+    { name = "scikit-learn", specifier = "==1.8.0" },
+    { name = "sentence-transformers", specifier = "==5.2.2" },
+    { name = "tenacity", specifier = "==9.1.2" },
+    { name = "tiktoken", specifier = "==0.12.0" },
+    { name = "torch", specifier = "==2.10.0" },
+    { name = "tqdm", specifier = "==4.67.1" },
+    { name = "transformers", specifier = "==5.0.0" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "ipykernel", specifier = "==7.1.0" },
+    { name = "jupyter", specifier = "==1.1.1" },
+]
+
+[[package]]
 name = "markupsafe"
 version = "3.0.3"
 source = { registry = "https://pypi.org/simple" }
@@ -2025,69 +2088,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/90/b8/4f0f5cf0c5ea4d7548424e6533e6b17d164f34a6e2fb2e43ffebb6697b06/scipy-1.17.0-cp313-cp313t-musllinux_1_2_x86_64.whl", hash = "sha256:cacbaddd91fcffde703934897c5cd2c7cb0371fac195d383f4e1f1c5d3f3bd04", size = 37438061, upload-time = "2026-01-10T21:28:19.684Z" },
     { url = "https://files.pythonhosted.org/packages/f9/cc/2bd59140ed3b2fa2882fb15da0a9cb1b5a6443d67cfd0d98d4cec83a57ec/scipy-1.17.0-cp313-cp313t-win_amd64.whl", hash = "sha256:edce1a1cf66298cccdc48a1bdf8fb10a3bf58e8b58d6c3883dd1530e103f87c0", size = 36328593, upload-time = "2026-01-10T21:28:28.007Z" },
     { url = "https://files.pythonhosted.org/packages/13/1b/c87cc44a0d2c7aaf0f003aef2904c3d097b422a96c7e7c07f5efd9073c1b/scipy-1.17.0-cp313-cp313t-win_arm64.whl", hash = "sha256:30509da9dbec1c2ed8f168b8d8aa853bc6723fede1dbc23c7d43a56f5ab72a67", size = 24625083, upload-time = "2026-01-10T21:28:35.188Z" },
-]
-
-[[package]]
-name = "sec-10k-rag"
-version = "0.1.0"
-source = { virtual = "." }
-dependencies = [
-    { name = "faiss-cpu" },
-    { name = "groq" },
-    { name = "huggingface-hub" },
-    { name = "matplotlib" },
-    { name = "nltk" },
-    { name = "numpy" },
-    { name = "openai" },
-    { name = "pandas" },
-    { name = "pdfplumber" },
-    { name = "pymupdf" },
-    { name = "python-dotenv" },
-    { name = "python-json-logger" },
-    { name = "rank-bm25" },
-    { name = "scikit-learn" },
-    { name = "sentence-transformers" },
-    { name = "tenacity" },
-    { name = "tiktoken" },
-    { name = "torch" },
-    { name = "tqdm" },
-    { name = "transformers" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "ipykernel" },
-    { name = "jupyter" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "faiss-cpu", specifier = "==1.13.2" },
-    { name = "groq", specifier = "==1.0.0" },
-    { name = "huggingface-hub", specifier = "==1.3.4" },
-    { name = "matplotlib", specifier = "==3.10.8" },
-    { name = "nltk", specifier = "==3.9.2" },
-    { name = "numpy", specifier = "==2.4.1" },
-    { name = "openai", specifier = "==2.15.0" },
-    { name = "pandas", specifier = "==3.0.0" },
-    { name = "pdfplumber", specifier = "==0.11.9" },
-    { name = "pymupdf", specifier = "==1.26.7" },
-    { name = "python-dotenv", specifier = "==1.2.1" },
-    { name = "python-json-logger", specifier = "==4.0.0" },
-    { name = "rank-bm25", specifier = "==0.2.2" },
-    { name = "scikit-learn", specifier = "==1.8.0" },
-    { name = "sentence-transformers", specifier = "==5.2.2" },
-    { name = "tenacity", specifier = "==9.1.2" },
-    { name = "tiktoken", specifier = "==0.12.0" },
-    { name = "torch", specifier = "==2.10.0" },
-    { name = "tqdm", specifier = "==4.67.1" },
-    { name = "transformers", specifier = "==5.0.0" },
-]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "ipykernel", specifier = "==7.1.0" },
-    { name = "jupyter", specifier = "==1.1.1" },
 ]
 
 [[package]]
