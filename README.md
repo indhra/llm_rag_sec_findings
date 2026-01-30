@@ -73,7 +73,7 @@ uv run python -m src.pipeline
 
 ### Google Colab
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](COLAB_LINK_HERE)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/indhra/llm_rag_sec_findings/blob/main/notebooks/RAG_SEC_10K.ipynb)
 
 ---
 
