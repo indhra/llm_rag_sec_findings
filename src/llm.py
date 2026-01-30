@@ -307,6 +307,9 @@ class GroqLLM:
                 "Get free key at: https://console.groq.com"
             )
         
+        # Strip whitespace/newlines from API key to prevent header errors
+        self.api_key = self.api_key.strip()
+        
         self.model = model
         self.client = Groq(api_key=self.api_key)
         self.provider = "groq"
@@ -386,6 +389,9 @@ class HuggingFaceLLM:
                 "HuggingFace token required. Set HF_TOKEN env var or pass api_key.\n"
                 "Get token at: https://huggingface.co/settings/tokens"
             )
+        
+        # Strip whitespace/newlines from API key to prevent header errors
+        self.api_key = self.api_key.strip()
         
         self.model = model
         self.client = InferenceClient(token=self.api_key)

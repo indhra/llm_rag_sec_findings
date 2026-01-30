@@ -4,9 +4,13 @@ Full evaluation on the 13 test questions from the assignment.
 """
 
 import os
+import sys
 import json
 from datetime import datetime
 from dotenv import load_dotenv
+
+# Add project root to path (assuming script is run from project root)
+sys.path.insert(0, os.getcwd())
 
 load_dotenv()
 
